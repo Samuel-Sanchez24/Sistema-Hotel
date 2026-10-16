@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/Core/">
+    <Project Path="HotelSystem.Application/HotelSystem.Application.csproj" Id="5fb4fc0b-2d5b-428b-ac0f-a9b631444851" />
+    <Project Path="HotelSystem.Domain/HotelSystem.Domain.csproj" Id="f434372d-e566-44e6-bc60-b26ba744e824" />
+  </Folder>
+  <Folder Name="/Infrastructure/">
+    <Project Path="HotelSystem.Persistence/HotelSystem.Persistence.csproj" Id="f7bd6760-afea-47f8-ae84-564fb7af692e" />
+  </Folder>
+  <Folder Name="/Presenters/">
+    <Project Path="HotelSystem.API/HotelSystem.API.csproj" Id="7c202f1b-4483-423a-9476-0e4fb347377f" />
+    <Project Path="HotelSystem.Web/HotelSystem.Web.csproj" Id="14b506b4-979d-49ca-a96d-d0979e012dc4" />
+  </Folder>
+</Solution>
