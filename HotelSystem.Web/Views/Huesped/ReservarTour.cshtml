@@ -1,0 +1,91 @@
+@model GuestToursPageDto
+@{
+    ViewData["Title"] = "Reservar Tour";
+    ViewData["Nav"] = "ReservarTour";
+    var payMethods = new[] { ("visa", "Visa **** 4242"), ("mc", "Mastercard **** 5555"), ("deposito", "Deposito registrado") };
+}
+<div class="p-6 space-y-5 h-full overflow-y-auto">
+    <div>
+        <h1 class="text-slate-100 font-semibold text-xl">Reservar Tour</h1>
+        <p class="text-slate-500 text-sm mt-0.5">Excursiones disponibles <span class="text-slate-700">(HU-09 - RN-05)</span></p>
+    </div>
+    <div class="space-y-3">
+        @foreach (var tour in Model.Tours)
+        {
+            var isConfirmed = Model.ConfirmedIds.Contains(tour.Id);
+            <div class="bg-[#0e1a2e] border rounded-2xl p-5 @(isConfirmed ? "border-emerald-500/40" : "border-[#1a2d48]")">
+                <div class="flex items-start justify-between gap-4">
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 flex-wrap mb-1">
+                            <span class="text-slate-100 font-semibold">@tour.Name</span>
+                            @if (isConfirmed)
+                            {
+                                @Ui.Pill("bg-emerald-500/10 text-emerald-400 border-emerald-500/20", "Reservado")
+                            }
+                            @if (tour.IsFull && !isConfirmed)
+                            {
+                                @Ui.Pill("bg-rose-500/10 text-rose-400 border-rose-500/20", "Lleno (RN-05)")
+                            }
+                        </div>
+                        <div class="text-slate-500 text-sm">@tour.Destination - @tour.Date @tour.Time</div>
+                        <div class="flex items-center gap-3 mt-2">
+                            <div class="h-1 bg-[#162035] rounded-full overflow-hidden w-24"><div class="h-full rounded-full @Ui.QuotaBarColor(tour)" style="width:@(tour.Percent)%"></div></div>
+                            <span class="text-slate-600 text-xs">@tour.FreeSpots cupos libres</span>
+                        </div>
+                    </div>
+                    <div class="text-right flex-shrink-0">
+                        <div class="text-amber-400 font-semibold text-sm" style="@Ui.Mono">@Ui.Money(tour.Price)</div>
+                        <div class="text-slate-600 text-xs">por persona</div>
+                    </div>
+                </div>
+                @if (!tour.IsFull && !isConfirmed)
+                {
+                    <a asp-action="ReservarTour" asp-route-tour="@tour.Id" class="block text-center mt-4 w-full border border-blue-500/30 text-blue-400 hover:bg-blue-500/10 py-2 rounded-xl text-sm font-medium transition-colors">Reservar</a>
+                }
+            </div>
+        }
+    </div>
+
+    @if (Model.Selected is { } sel)
+    {
+        var f = Model.Form;
+        @Ui.ModalOpen(sel.Name, Url.Action("ReservarTour")!)
+        <p class="text-slate-500 text-sm mb-4">@sel.Date - @sel.Time - @sel.Destination</p>
+        <form asp-action="ConfirmarTour" method="post" class="space-y-4">
+            <input type="hidden" name="TourId" value="@sel.Id" />
+            <div class="flex items-center gap-3" data-counter data-min="1" data-max="@sel.FreeSpots" data-price="@sel.Price.ToString("0")" data-total="#tour-total">
+                <input type="hidden" name="Persons" value="@Math.Clamp(f.Persons, 1, sel.FreeSpots)" />
+                <button type="button" data-step="-1" class="w-9 h-9 rounded-xl bg-[#162035] text-slate-300 flex items-center justify-center text-lg">-</button>
+                <span data-counter-value class="text-slate-100 font-semibold w-6 text-center" style="@Ui.Mono">@f.Persons</span>
+                <button type="button" data-step="1" class="w-9 h-9 rounded-xl bg-[#162035] text-slate-300 flex items-center justify-center text-lg">+</button>
+            </div>
+            <div class="flex justify-between py-2 border-t border-[#162035]">
+                <span class="text-slate-500">Total</span>
+                <span id="tour-total" class="text-amber-400 font-semibold" style="@Ui.Mono">@Ui.Money(sel.Price * f.Persons)</span>
+            </div>
+            <div class="space-y-1.5">
+                <label for="PayMethod" class="text-slate-400 text-xs font-medium">Respaldo de pago <span class="text-rose-400">*</span></label>
+                <select id="PayMethod" name="PayMethod" class="w-full bg-[#0a1424] border border-[#1a2d48] rounded-xl px-4 py-3 text-slate-200 text-sm focus:outline-none focus:border-amber-400/50">
+                    <option value="">Seleccionar metodo...</option>
+                    @foreach (var (value, label) in payMethods)
+                    {
+                        <option value="@value" selected="@(value == f.PayMethod)">@label</option>
+                    }
+                </select>
+            </div>
+            <label class="flex items-start gap-3 cursor-pointer group" data-check>
+                <input type="checkbox" name="AgeConfirmed" value="true" checked="@f.AgeConfirmed" class="hidden" />
+                <div data-check-box class="mt-0.5 w-5 h-5 rounded flex items-center justify-center flex-shrink-0 border-2 transition-colors border-[#253d60] group-hover:border-blue-500/50">
+                    <span data-check-mark class="hidden">@Ui.Ic(Icons.Check, 12)</span>
+                </div>
+                <span class="text-slate-400 text-sm">Confirmo que soy mayor de 18 anos (RN-10)</span>
+            </label>
+            @if (Model.Error is not null)
+            {
+                <div class="bg-rose-500/10 border border-rose-500/25 rounded-xl px-4 py-3 text-rose-400 text-sm">@Model.Error</div>
+            }
+            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-xl text-sm font-medium transition-colors">Confirmar reserva de tour</button>
+        </form>
+        @Ui.ModalClose()
+    }
+</div>

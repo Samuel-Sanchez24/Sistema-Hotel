@@ -1,0 +1,161 @@
+@model BookRoomPageDto
+@{
+    ViewData["Title"] = "Reservar Habitacion";
+    ViewData["Nav"] = "ReservarHabitacion";
+    var f = Model.Form;
+    var cap = MockData.CapacityByType[f.Type];
+    var route = new Dictionary<string, string>
+    {
+        ["Type"] = f.Type.ToString(),
+        ["CheckIn"] = f.CheckIn,
+        ["CheckOut"] = f.CheckOut,
+        ["Guests"] = f.Guests.ToString(),
+    };
+    var steps = new[] { "Preferencias", "Elegir habitacion", "Confirmar" };
+    var payMethods = new[] { ("visa", "Visa **** 4242"), ("mc", "Mastercard **** 5555"), ("transfer", "Transferencia bancaria"), ("efectivo", "Deposito en efectivo") };
+}
+
+@if (Model.Done && Model.SelectedRoom is { } booked)
+{
+    <div class="p-6 flex flex-col items-center justify-center h-full text-center">
+        <div class="w-16 h-16 rounded-full bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center mb-5 text-emerald-400">@Ui.Ic(Icons.Check, 28)</div>
+        <div class="text-slate-100 font-semibold text-xl mb-2">Reserva confirmada</div>
+        <div class="text-slate-500 text-sm mb-1">Hab. @booked.Number - @Ui.TypeLabel(booked.Type)</div>
+        <div class="text-slate-500 text-sm mb-6">@f.CheckIn a @f.CheckOut - @Model.Nights noches - @Ui.Money(Model.Total)</div>
+        <div class="bg-[#0e1a2e] border border-[#1a2d48] rounded-xl px-6 py-4 text-sm text-slate-400 mb-2">Confirmacion enviada a <span class="text-slate-200">@Model.GuestEmail</span> <span class="text-slate-600">(HU-04 Esc.1)</span></div>
+        <a asp-action="ReservarHabitacion" class="mt-4 text-blue-400 text-sm hover:text-blue-300">Hacer otra reserva</a>
+    </div>
+    return;
+}
+
+<div class="p-6 space-y-6 h-full overflow-y-auto">
+    <div>
+        <h1 class="text-slate-100 font-semibold text-xl">Reservar Habitacion</h1>
+        <p class="text-slate-500 text-sm mt-0.5">Maximo 3 pasos <span class="text-slate-700">(RNF-04 - HU-03)</span></p>
+    </div>
+
+    <div class="flex items-center gap-2">
+        @for (var s = 1; s <= 3; s++)
+        {
+            <div class="flex items-center gap-2">
+                <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold transition-all @(Model.Step > s ? "bg-emerald-500 text-white" : Model.Step == s ? "bg-amber-400 text-[#080f1c]" : "bg-[#162035] text-slate-600")">
+                    @if (Model.Step > s) { @Ui.Ic(Icons.Check, 12) } else { @s }
+                </div>
+                <span class="text-xs @(Model.Step == s ? "text-slate-200" : Model.Step > s ? "text-slate-500" : "text-slate-700")">@steps[s - 1]</span>
+                @if (s < 3)
+                {
+                    <div class="h-px w-6 @(Model.Step > s ? "bg-emerald-500/50" : "bg-[#162035]")"></div>
+                }
+            </div>
+        }
+    </div>
+
+    @if (Model.Step == 1)
+    {
+        @* Cambiar el tipo recarga el paso 1 para recalcular disponibilidad; "Ver habitaciones" envia paso=2. *@
+        <form asp-action="ReservarHabitacion" method="get" class="max-w-md space-y-5">
+            <div class="space-y-2">
+                <span class="text-slate-400 text-xs font-medium">Tipo de habitacion</span>
+                <div class="grid grid-cols-3 gap-2">
+                    @foreach (var t in Enum.GetValues<RoomType>())
+                    {
+                        <label class="cursor-pointer text-center py-3 rounded-xl border text-sm font-medium transition-all @(f.Type == t ? "border-amber-400/50 bg-amber-400/10 text-amber-400" : "border-[#1a2d48] text-slate-500 hover:text-slate-300 hover:border-[#253d60]")">
+                            <input type="radio" name="Type" value="@t" checked="@(f.Type == t)" data-autosubmit class="hidden" />
+                            <div>@Ui.TypeLabel(t)</div><div class="text-xs opacity-70 mt-0.5">@Ui.Money(MockData.PriceByType[t])/noche</div>
+                        </label>
+                    }
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div class="space-y-1.5"><label for="CheckIn" class="text-slate-400 text-xs font-medium">Check-in</label><input id="CheckIn" name="CheckIn" value="@f.CheckIn" class="w-full bg-[#0e1a2e] border border-[#1a2d48] rounded-xl px-4 py-3 text-slate-200 text-sm focus:outline-none focus:border-amber-400/50" /></div>
+                <div class="space-y-1.5"><label for="CheckOut" class="text-slate-400 text-xs font-medium">Check-out</label><input id="CheckOut" name="CheckOut" value="@f.CheckOut" class="w-full bg-[#0e1a2e] border border-[#1a2d48] rounded-xl px-4 py-3 text-slate-200 text-sm focus:outline-none focus:border-amber-400/50" /></div>
+            </div>
+            <div class="space-y-1.5">
+                <span class="text-slate-400 text-xs font-medium">Huespedes</span>
+                <div class="flex items-center gap-3" data-counter data-min="1" data-max="@cap" data-warn="#guests-warn" data-warn-above="@cap">
+                    <input type="hidden" name="Guests" value="@f.Guests" />
+                    <button type="button" data-step="-1" class="w-9 h-9 rounded-xl bg-[#162035] text-slate-300 hover:bg-[#1a2840] flex items-center justify-center text-lg">-</button>
+                    <span data-counter-value class="text-slate-100 font-semibold w-6 text-center" style="@Ui.Mono">@f.Guests</span>
+                    <button type="button" data-step="1" class="w-9 h-9 rounded-xl bg-[#162035] text-slate-300 hover:bg-[#1a2840] flex items-center justify-center text-lg">+</button>
+                </div>
+                <p id="guests-warn" class="text-rose-400 text-xs @(f.Guests > cap ? "" : "hidden")">Excede la capacidad maxima del tipo (RN-11)</p>
+            </div>
+            @if (Model.Available.Count == 0)
+            {
+                <div class="bg-rose-500/10 border border-rose-500/20 rounded-xl px-4 py-3 text-sm text-rose-400">Sin habitaciones disponibles de tipo @Ui.TypeLabel(f.Type). Pruebe otro tipo o fechas. (HU-03 Esc.2)</div>
+            }
+            else
+            {
+                <button type="submit" name="paso" value="2" class="w-full bg-blue-600 hover:bg-blue-500 text-white py-3 rounded-xl text-sm font-medium transition-colors">Ver @Model.Available.Count habitaciones disponibles</button>
+            }
+        </form>
+    }
+
+    @if (Model.Step == 2)
+    {
+        <div class="space-y-4">
+            <div class="flex items-center justify-between">
+                <div class="text-slate-400 text-sm">@Model.Available.Count habitaciones - @Ui.TypeLabel(f.Type)</div>
+                <a asp-action="ReservarHabitacion" asp-all-route-data="route" asp-route-paso="1" class="text-slate-600 text-sm hover:text-slate-400">Cambiar</a>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                @foreach (var r in Model.Available)
+                {
+                    <a asp-action="ReservarHabitacion" asp-all-route-data="route" asp-route-paso="3" asp-route-RoomId="@r.Id"
+                       class="block bg-[#0e1a2e] border border-[#1a2d48] rounded-xl p-4 text-left hover:border-amber-400/40 transition-all">
+                        <div class="flex justify-between items-start"><span class="text-slate-100 font-semibold text-lg" style="@Ui.Mono">@r.Number</span>@Ui.Badge(r.Status)</div>
+                        <div class="text-slate-500 text-sm mt-1">Piso @r.Floor - @r.Capacity personas</div>
+                        <div class="text-amber-400 text-sm font-medium mt-2">@Ui.Money(r.Price)<span class="text-slate-600 font-normal text-xs">/noche</span></div>
+                    </a>
+                }
+            </div>
+        </div>
+    }
+
+    @if (Model.Step == 3 && Model.SelectedRoom is { } room)
+    {
+        <form asp-action="ConfirmarReserva" method="post" class="max-w-md space-y-5">
+            @foreach (var (key, value) in route)
+            {
+                <input type="hidden" name="@key" value="@value" />
+            }
+            <input type="hidden" name="RoomId" value="@room.Id" />
+
+            <a asp-action="ReservarHabitacion" asp-all-route-data="route" asp-route-paso="2" class="text-slate-600 hover:text-slate-400 text-sm flex items-center gap-1.5">@Ui.Ic(Icons.Back, 14) Volver</a>
+            <div class="bg-[#0e1a2e] border border-[#1a2d48] rounded-2xl p-5 space-y-2.5">
+                <div class="text-slate-100 font-semibold mb-3">Resumen de reserva</div>
+                @foreach (var (k, v) in new[] { ("Habitacion", $"{room.Number} - {Ui.TypeLabel(room.Type)}"), ("Noches", Model.Nights.ToString()), ("Total", Ui.Money(Model.Total)) })
+                {
+                    var isTotal = k == "Total";
+                    <div class="flex justify-between py-2 border-b border-[#162035] last:border-0">
+                        <span class="text-sm @(isTotal ? "text-slate-100 font-semibold" : "text-slate-500")">@k</span>
+                        <span class="text-sm @(isTotal ? "text-amber-400 font-semibold" : "text-slate-200")" style="@Ui.Mono">@v</span>
+                    </div>
+                }
+            </div>
+            <div class="space-y-1.5">
+                <label for="PayMethod" class="text-slate-400 text-xs font-medium">Medio de pago <span class="text-rose-400">*</span> <span class="text-slate-700">(RN-04 - HU-03 Esc.3)</span></label>
+                <select id="PayMethod" name="PayMethod" class="w-full bg-[#0e1a2e] border border-[#1a2d48] rounded-xl px-4 py-3 text-slate-200 text-sm focus:outline-none focus:border-amber-400/50">
+                    <option value="">Seleccionar metodo...</option>
+                    @foreach (var (value, label) in payMethods)
+                    {
+                        <option value="@value" selected="@(value == f.PayMethod)">@label</option>
+                    }
+                </select>
+            </div>
+            <label class="flex items-start gap-3 cursor-pointer group" data-check>
+                <input type="checkbox" name="AgeConfirmed" value="true" checked="@f.AgeConfirmed" class="hidden" />
+                <div data-check-box class="mt-0.5 w-5 h-5 rounded flex items-center justify-center flex-shrink-0 border-2 transition-colors border-[#253d60] group-hover:border-blue-500/50">
+                    <span data-check-mark class="hidden">@Ui.Ic(Icons.Check, 12)</span>
+                </div>
+                <span class="text-slate-400 text-sm leading-relaxed">Confirmo que soy mayor de 18 anos <span class="text-slate-700">(RN-10 - HU-03 Esc.4)</span></span>
+            </label>
+            @if (Model.Error is not null)
+            {
+                <div class="bg-rose-500/10 border border-rose-500/25 rounded-xl px-4 py-3 text-rose-400 text-sm">@Model.Error</div>
+            }
+            <div class="bg-blue-500/8 border border-blue-500/15 rounded-xl px-4 py-3 text-xs text-slate-500">Cancelacion gratuita hasta 48h antes del check-in. Posterior: cargo 1 noche. (RN-09)</div>
+            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-xl text-sm font-medium transition-colors">Confirmar Reserva</button>
+        </form>
+    }
+</div>

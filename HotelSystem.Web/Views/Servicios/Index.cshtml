@@ -1,0 +1,57 @@
+@model RegisterConsumptionPageDto
+@{
+    ViewData["Title"] = "Registrar Consumo";
+    ViewData["Nav"] = "Index";
+    var hasRoom = !string.IsNullOrEmpty(Model.RoomNumber);
+}
+<div class="p-6 space-y-6 h-full overflow-y-auto">
+    <div>
+        <h1 class="text-slate-100 font-semibold text-xl">Registrar Consumo</h1>
+        <p class="text-slate-500 text-sm mt-0.5">Asocie el consumo en tiempo real <span class="text-slate-700">(HU-08 - RN-06)</span></p>
+    </div>
+    <div class="max-w-md space-y-4">
+        @* Al elegir habitacion se recarga para mostrar el huesped y habilitar los campos. *@
+        <form asp-action="Index" method="get" class="space-y-1.5">
+            <label for="hab" class="text-slate-400 text-xs font-medium">Habitacion del huesped</label>
+            <select id="hab" name="hab" data-autosubmit class="w-full bg-[#0e1a2e] border border-[#1a2d48] rounded-xl px-4 py-3 text-slate-200 text-sm focus:outline-none focus:border-amber-400/50">
+                <option value="">Seleccionar habitacion...</option>
+                @foreach (var r in Model.OccupiedRooms)
+                {
+                    <option value="@r.Number" selected="@(r.Number == Model.RoomNumber)">Hab. @r.Number - @r.GuestName</option>
+                }
+            </select>
+        </form>
+
+        <form asp-action="Registrar" method="post" class="space-y-4">
+            <input type="hidden" name="RoomNumber" value="@Model.RoomNumber" />
+            @if (Model.SelectedRoom is { } room)
+            {
+                <div class="bg-[#0a1424] border border-[#162035] rounded-xl px-4 py-3 text-sm flex gap-4">
+                    <div><span class="text-slate-600">Huesped:</span> <span class="text-slate-300">@room.GuestName</span></div>
+                    <div><span class="text-slate-600">Tipo:</span> <span class="text-slate-400">@Ui.TypeLabel(room.Type)</span></div>
+                </div>
+            }
+            <div class="space-y-1.5">
+                <label for="Service" class="text-slate-400 text-xs font-medium">Servicio (catalogo activo)</label>
+                <select id="Service" name="Service" disabled="@(!hasRoom)" class="w-full bg-[#0e1a2e] border border-[#1a2d48] rounded-xl px-4 py-3 text-slate-200 text-sm focus:outline-none focus:border-amber-400/50 disabled:opacity-40">
+                    <option value="">Seleccionar servicio...</option>
+                    @foreach (var s in Model.ActiveServices)
+                    {
+                        <option value="@s.Name" selected="@(s.Name == Model.Service)">@(s.Name + (s.Price is { } p ? $" - {Ui.Money(p)}" : ""))</option>
+                    }
+                </select>
+            </div>
+            <div class="space-y-1.5">
+                <label for="Amount" class="text-slate-400 text-xs font-medium">Monto (COP)</label>
+                <input id="Amount" name="Amount" value="@Model.Amount" placeholder="Ej: 45000" disabled="@(!hasRoom)"
+                       class="w-full bg-[#0e1a2e] border border-[#1a2d48] rounded-xl px-4 py-3 text-slate-200 text-sm placeholder-slate-700 focus:outline-none focus:border-amber-400/50 disabled:opacity-40" />
+            </div>
+            @if (Model.Error is not null)
+            {
+                <div class="text-rose-400 text-sm bg-rose-500/10 border border-rose-500/20 rounded-xl px-4 py-3">@Model.Error</div>
+            }
+            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white py-3 rounded-xl text-sm font-medium transition-colors">Registrar Consumo</button>
+            <p class="text-slate-700 text-xs">Solo se puede registrar el mismo dia (RN-06). La cuenta se cierra al check-out (RN-07).</p>
+        </form>
+    </div>
+</div>

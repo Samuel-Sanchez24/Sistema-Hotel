@@ -1,0 +1,98 @@
+@model RoomsPanelDto
+@{
+    ViewData["Title"] = "Panel de Habitaciones";
+    ViewData["Nav"] = "Index";
+    var cards = new (string Label, RoomStatus Status, string Color)[]
+    {
+        ("Disponibles", RoomStatus.Disponible, "text-emerald-400"),
+        ("Ocupadas", RoomStatus.Ocupada, "text-rose-400"),
+        ("En limpieza", RoomStatus.EnLimpieza, "text-amber-400"),
+        ("Mantenimiento", RoomStatus.Mantenimiento, "text-slate-500"),
+    };
+}
+<div class="p-6 space-y-6 h-full overflow-y-auto">
+    <div class="flex items-start justify-between">
+        <div>
+            <h1 class="text-slate-100 font-semibold text-xl">Panel de Habitaciones</h1>
+            <p class="text-slate-500 text-sm mt-0.5">Tiempo real - 9 Sep 2026 <span class="text-slate-700">(HU-05 - RF-07)</span></p>
+        </div>
+        <span class="inline-flex items-center gap-1.5 text-xs text-emerald-400 bg-emerald-400/10 border border-emerald-500/20 px-3 py-1.5 rounded-full">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>En vivo
+        </span>
+    </div>
+
+    <div class="grid grid-cols-4 gap-3">
+        @foreach (var c in cards)
+        {
+            var isOn = Model.Filter == c.Status;
+            <a asp-action="Index" asp-route-piso="@Model.Floor" asp-route-estado="@(isOn ? (RoomStatus?)null : c.Status)"
+               class="block bg-[#0e1a2e] border rounded-xl p-4 text-left transition-all @(isOn ? "border-amber-400/40 ring-1 ring-amber-400/15" : "border-[#1a2d48] hover:border-[#253d60]")">
+                <div class="text-2xl font-semibold @c.Color" style="@Ui.Mono">@Model.Counts[c.Status]</div>
+                <div class="text-slate-500 text-xs mt-1">@c.Label</div>
+            </a>
+        }
+    </div>
+
+    <div class="flex items-center gap-2">
+        <span class="text-slate-600 text-xs">Piso:</span>
+        @for (var f = 1; f <= 6; f++)
+        {
+            <a asp-action="Index" asp-route-piso="@f" asp-route-estado="@Model.Filter"
+               class="w-9 h-9 rounded-lg text-sm font-medium transition-colors flex items-center justify-center @(Model.Floor == f ? "bg-amber-400/10 text-amber-400 border border-amber-400/30" : "text-slate-500 hover:text-slate-200 hover:bg-[#0f1e35]")">@f</a>
+        }
+    </div>
+
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+        @foreach (var room in Model.FloorRooms)
+        {
+            var sc = Ui.Sc(room.Status);
+            <a asp-action="Index" asp-route-piso="@Model.Floor" asp-route-estado="@Model.Filter" asp-route-hab="@room.Id"
+               class="block bg-[#0e1a2e] border rounded-xl p-4 text-left hover:scale-[1.02] transition-all @sc.Ring">
+                <div class="flex items-start justify-between mb-2">
+                    <span class="text-slate-100 font-semibold text-lg" style="@Ui.Mono">@room.Number</span>
+                    <span class="w-2 h-2 rounded-full mt-1.5 @sc.Dot"></span>
+                </div>
+                <div class="text-slate-600 text-xs mb-2">@Ui.TypeLabel(room.Type)</div>
+                <div class="text-xs font-medium @sc.Text">@sc.Label</div>
+                @if (room.GuestName is not null)
+                {
+                    <div class="text-slate-600 text-xs mt-1.5 truncate">@room.GuestName</div>
+                }
+            </a>
+        }
+        @if (Model.FloorRooms.Count == 0)
+        {
+            <div class="col-span-5 py-12 text-center text-slate-600 text-sm">Sin habitaciones con ese estado en el piso.</div>
+        }
+    </div>
+
+    @if (Model.Selected is { } sel)
+    {
+        var rows = new List<(string Label, IHtmlContent Value)>
+        {
+            ("Estado", Ui.Badge(sel.Status)),
+            ("Tarifa", new HtmlString($"<span style=\"{Ui.Mono}\">{Ui.Money(sel.Price)}/noche</span>")),
+            ("Ultima actualizacion", new HtmlString($"<span class=\"text-slate-400 text-xs\">{Html.Encode(sel.LastUpdated)}</span>")),
+        };
+        if (sel.GuestName is not null)
+        {
+            rows.Add(("Huesped", new HtmlString(Html.Encode(sel.GuestName))));
+            rows.Add(("Estancia", new HtmlString($"<span style=\"{Ui.Mono}\">{Html.Encode(sel.CheckIn)} a {Html.Encode(sel.CheckOut)}</span>")));
+        }
+        if (sel.MaintenanceNote is not null)
+        {
+            rows.Add(("Incidencia", new HtmlString($"<span class=\"text-amber-400 text-xs\">{Html.Encode(sel.MaintenanceNote)}</span>")));
+        }
+
+        @Ui.ModalOpen($"Habitacion {sel.Number}", Url.Action("Index", new { piso = Model.Floor, estado = Model.Filter })!)
+        <p class="text-slate-500 text-sm mb-4">Piso @sel.Floor - @Ui.TypeLabel(sel.Type) - hasta @sel.Capacity personas</p>
+        @foreach (var (label, value) in rows)
+        {
+            <div class="flex justify-between items-center py-2.5 border-b border-[#162035] last:border-0">
+                <span class="text-slate-500 text-sm">@label</span>
+                <span class="text-slate-200 text-sm">@value</span>
+            </div>
+        }
+        @Ui.ModalClose()
+    }
+</div>

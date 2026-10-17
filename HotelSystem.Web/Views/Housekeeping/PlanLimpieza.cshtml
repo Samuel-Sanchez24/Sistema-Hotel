@@ -1,0 +1,55 @@
+@model CleaningPlanDto
+@{
+    ViewData["Title"] = "Plan de Limpieza";
+    ViewData["Nav"] = "PlanLimpieza";
+}
+<div class="p-6 space-y-5 h-full overflow-y-auto">
+    <div>
+        <h1 class="text-slate-100 font-semibold text-xl">Plan de Limpieza Diario</h1>
+        <p class="text-slate-500 text-sm mt-0.5">Priorizado por llegadas del dia - 9 Sep 2026 <span class="text-slate-700">(HU-11 - RF-10)</span></p>
+    </div>
+    <div class="grid grid-cols-2 gap-3 max-w-xs">
+        <div class="bg-blue-500/10 border border-blue-500/20 rounded-xl p-3 text-center">
+            <div class="text-blue-400 font-semibold text-xl" style="@Ui.Mono">@Model.ArrivalsTodayCount</div>
+            <div class="text-slate-600 text-xs mt-0.5">Con llegada hoy</div>
+        </div>
+        <div class="bg-amber-400/8 border border-amber-500/20 rounded-xl p-3 text-center">
+            <div class="text-amber-400 font-semibold text-xl" style="@Ui.Mono">@Model.PendingCount</div>
+            <div class="text-slate-600 text-xs mt-0.5">Total pendientes</div>
+        </div>
+    </div>
+
+    @if (Model.Tasks.Count == 0)
+    {
+        <div class="py-20 text-center">
+            <div class="text-emerald-400 text-4xl mb-3">v</div>
+            <div class="text-slate-400 font-medium">Sin tareas pendientes</div>
+            <div class="text-slate-600 text-sm mt-1">Todas las habitaciones estan en orden.</div>
+        </div>
+    }
+    else
+    {
+        <div class="space-y-2 max-w-xl">
+            @for (var i = 0; i < Model.Tasks.Count; i++)
+            {
+                var (room, urgent) = Model.Tasks[i];
+                <div class="bg-[#0e1a2e] border rounded-xl px-5 py-4 flex items-center gap-4 @(urgent ? "border-blue-500/30" : "border-[#1a2d48]")">
+                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 @(urgent ? "bg-blue-500/15 text-blue-400" : "bg-[#162035] text-slate-600")" style="@Ui.Mono">@(i + 1)</div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2">
+                            <span class="text-slate-100 font-semibold" style="@Ui.Mono">Hab. @room.Number</span>
+                            @if (urgent)
+                            {
+                                @Ui.Pill("bg-blue-500/10 text-blue-400 border-blue-500/20", "Llegada hoy (HU-11 Esc.5)")
+                            }
+                        </div>
+                        <div class="text-slate-500 text-sm">@Ui.TypeLabel(room.Type) - Piso @room.Floor</div>
+                        <div class="text-slate-700 text-xs">Ultima act.: @room.LastUpdated</div>
+                    </div>
+                    @Ui.Badge(room.Status)
+                </div>
+            }
+            <p class="text-slate-700 text-xs pt-2">Sin llegadas hoy: orden por checkout mas antiguo.</p>
+        </div>
+    }
+</div>

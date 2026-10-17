@@ -1,0 +1,12 @@
+@{
+    var message = TempData["Toast"] as string;
+    var isError = (TempData["ToastType"] as string) == nameof(ToastType.Error);
+}
+@if (!string.IsNullOrEmpty(message))
+{
+    <div data-toast class="fixed bottom-6 right-6 z-50 px-5 py-3 rounded-xl shadow-xl text-sm font-medium flex items-center gap-3 @(isError ? "bg-rose-600" : "bg-emerald-600") text-white">
+        @Ui.Ic(isError ? Icons.Close : Icons.Check, 16)
+        @message
+        <button type="button" data-toast-close class="ml-2 opacity-70 hover:opacity-100">@Ui.Ic(Icons.Close, 14)</button>
+    </div>
+}

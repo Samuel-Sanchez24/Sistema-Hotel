@@ -1,0 +1,138 @@
+@model BillingPageDto
+@{
+    ViewData["Title"] = "Facturacion y Pago";
+    ViewData["Nav"] = "Facturacion";
+}
+<div class="p-6 space-y-6 h-full overflow-y-auto">
+    <div>
+        <h1 class="text-slate-100 font-semibold text-xl">Facturacion y Pago</h1>
+        <p class="text-slate-500 text-sm mt-0.5">Prefactura - registro de pago - cierre de cuenta <span class="text-slate-700">(HU-06 - HU-12 - RN-07)</span></p>
+    </div>
+
+    <form asp-action="Facturacion" method="get" class="max-w-sm space-y-2">
+        <label for="q" class="text-slate-400 text-xs font-medium">Buscar huesped o habitacion</label>
+        <div class="relative">
+            <div class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-600">@Ui.Ic(Icons.Search, 14)</div>
+            <input id="q" name="q" value="@Model.Query" placeholder="Nombre o habitacion..."
+                   class="w-full bg-[#0e1a2e] border border-[#1a2d48] rounded-xl pl-8 pr-4 py-2.5 text-slate-200 text-sm placeholder-slate-700 focus:outline-none focus:border-amber-400/50" />
+        </div>
+        @if (Model.Results.Count > 0)
+        {
+            <div class="bg-[#0a1424] border border-[#1a2d48] rounded-xl overflow-hidden">
+                @foreach (var r in Model.Results)
+                {
+                    <a asp-action="Facturacion" asp-route-hab="@r.Id"
+                       class="w-full px-4 py-3 text-left hover:bg-[#0e1a2e] flex items-center gap-3 border-b border-[#162035] last:border-0">
+                        <span class="text-amber-400/70 font-mono text-sm">@r.Number</span>
+                        <span class="text-slate-300 text-sm">@r.GuestName</span>
+                        <span class="text-slate-600 text-xs ml-auto">@r.CheckIn a @r.CheckOut</span>
+                    </a>
+                }
+            </div>
+        }
+    </form>
+
+    @if (Model.Selected is { } sel)
+    {
+        <div class="max-w-lg space-y-4">
+            @if (Model.Closed)
+            {
+                <div class="bg-emerald-500/10 border border-emerald-500/25 rounded-2xl p-6 text-center space-y-3">
+                    <div class="text-emerald-400 text-3xl">v</div>
+                    <div class="text-emerald-400 font-semibold">Cuenta cerrada correctamente</div>
+                    <div class="text-slate-500 text-sm">@sel.GuestName - Hab. @sel.Number - @Model.PayMethod</div>
+                    <div class="text-amber-400 font-semibold text-lg" style="@Ui.Mono">@Ui.Money(Model.GrandTotal)</div>
+                    <div class="text-slate-600 text-xs">Cuenta cerrada y habitacion en limpieza. No se pueden agregar mas consumos. (RN-02 - RN-06 - RN-07 - HU-06 Esc.3)</div>
+                    <a asp-action="Facturacion" class="inline-block mt-2 text-blue-400 text-sm hover:text-blue-300">Gestionar otro huesped</a>
+                </div>
+            }
+            else
+            {
+                <div class="bg-[#0e1a2e] border border-[#1a2d48] rounded-2xl overflow-hidden">
+                    <div class="px-6 py-4 border-b border-[#162035] flex justify-between items-center">
+                        <div>
+                            <div class="text-slate-100 font-semibold">Prefactura <span class="text-slate-600 text-xs">(HU-12)</span></div>
+                            <div class="text-slate-500 text-sm">@sel.GuestName - Hab. @sel.Number</div>
+                        </div>
+                        @Ui.Pill("bg-amber-400/10 text-amber-400 border-amber-400/20", "Pre-factura")
+                    </div>
+                    <div class="px-6 py-4 space-y-3">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <div class="text-slate-200 text-sm font-medium">Alojamiento</div>
+                                <div class="text-slate-500 text-xs">Hab. @sel.Number (@Ui.TypeLabel(sel.Type)) - @Model.Nights noches</div>
+                            </div>
+                            <span class="text-slate-200 text-sm" style="@Ui.Mono">@Ui.Money(Model.RoomTotal)</span>
+                        </div>
+                        @if (Model.Consumptions.Count > 0)
+                        {
+                            <div class="pt-3 border-t border-[#162035]">
+                                <div class="text-slate-500 text-xs font-medium mb-2">Servicios adicionales</div>
+                                @foreach (var c in Model.Consumptions)
+                                {
+                                    <div class="flex justify-between py-1.5">
+                                        <div>
+                                            <div class="text-slate-300 text-sm">@c.Service</div>
+                                            <div class="text-slate-600 text-xs">@c.Date - @c.Time</div>
+                                        </div>
+                                        <span class="text-slate-300 text-sm" style="@Ui.Mono">@Ui.Money(c.Amount)</span>
+                                    </div>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="pt-2 border-t border-[#162035] text-slate-600 text-sm">Servicios adicionales: @Ui.Money(0) <span class="text-slate-700">(HU-12 Esc.2)</span></div>
+                        }
+                        <div class="pt-3 border-t border-[#253d60] flex justify-between items-center">
+                            <span class="text-slate-100 font-semibold">Total</span>
+                            <span class="text-amber-400 font-semibold text-lg" style="@Ui.Mono">@Ui.Money(Model.GrandTotal)</span>
+                        </div>
+                    </div>
+                </div>
+
+                @if (!Model.Generated)
+                {
+                    <form asp-action="GenerarPrefactura" method="post">
+                        <input type="hidden" name="hab" value="@sel.Id" />
+                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white py-3 rounded-xl text-sm font-medium transition-colors">Generar Prefactura</button>
+                    </form>
+                }
+                else
+                {
+                    <form asp-action="CerrarCuenta" method="post" class="space-y-3">
+                        <input type="hidden" name="RoomId" value="@sel.Id" />
+                        <div class="bg-emerald-500/8 border border-emerald-500/15 rounded-xl px-5 py-3 flex items-center gap-3 text-emerald-400 text-sm">
+                            @Ui.Ic(Icons.CheckCircle, 18)
+                            <div>
+                                <div class="font-medium">Prefactura generada</div>
+                                <div class="text-xs opacity-70">Solo se ofrece resumen de prefactura. Sin comprobante fiscal. (HU-12 Esc.5)</div>
+                            </div>
+                        </div>
+                        <div class="space-y-1.5">
+                            <label for="PaidAmount" class="text-slate-400 text-xs font-medium">Monto pagado <span class="text-rose-400">*</span></label>
+                            <input id="PaidAmount" name="PaidAmount" value="@Model.PaidAmount" placeholder="@Model.GrandTotal.ToString("0")"
+                                   class="w-full bg-[#0e1a2e] border border-[#1a2d48] rounded-xl px-4 py-3 text-slate-200 text-sm focus:outline-none focus:border-amber-400/50" />
+                            <p class="text-slate-700 text-xs">Debe coincidir con el total de la prefactura: @Ui.Money(Model.GrandTotal).</p>
+                        </div>
+                        <div class="space-y-1.5">
+                            <label for="PayMethod" class="text-slate-400 text-xs font-medium">Metodo de pago <span class="text-rose-400">*</span> <span class="text-slate-700">(HU-06)</span></label>
+                            <select id="PayMethod" name="PayMethod" class="w-full bg-[#0e1a2e] border border-[#1a2d48] rounded-xl px-4 py-3 text-slate-200 text-sm focus:outline-none focus:border-amber-400/50">
+                                <option value="">Seleccionar metodo de pago...</option>
+                                @foreach (var m in Model.PaymentMethods)
+                                {
+                                    <option value="@m" selected="@(m == Model.PayMethod)">@m</option>
+                                }
+                            </select>
+                        </div>
+                        @if (Model.Error is not null)
+                        {
+                            <div class="text-rose-400 text-sm bg-rose-500/10 border border-rose-500/20 rounded-xl px-4 py-3">@Model.Error</div>
+                        }
+                        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-xl text-sm font-medium transition-colors">Registrar Pago y Cerrar Cuenta</button>
+                    </form>
+                }
+            }
+        </div>
+    }
+</div>

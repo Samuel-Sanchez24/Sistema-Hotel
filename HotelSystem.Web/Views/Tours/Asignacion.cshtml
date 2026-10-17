@@ -1,0 +1,105 @@
+@model TourAssignmentPageDto
+@{
+    ViewData["Title"] = "Asignacion de Recursos";
+    ViewData["Nav"] = "Asignacion";
+    var hasTour = Model.Selected is not null;
+}
+<div class="p-6 space-y-6 h-full overflow-y-auto">
+    <div>
+        <h1 class="text-slate-100 font-semibold text-xl">Asignacion de Recursos</h1>
+        <p class="text-slate-500 text-sm mt-0.5">Guias y vehiculos a tours confirmados <span class="text-slate-700">(HU-10 - RN-03)</span></p>
+    </div>
+
+    <div class="max-w-md space-y-4">
+        @* Al cambiar de tour se recarga la pagina para marcar recursos ocupados en ese horario. *@
+        <form asp-action="Asignacion" method="get" class="space-y-1.5">
+            <label for="tourId" class="text-slate-400 text-xs font-medium">Tour</label>
+            <select id="tourId" name="tourId" data-autosubmit class="w-full bg-[#0e1a2e] border border-[#1a2d48] rounded-xl px-4 py-3 text-slate-200 text-sm focus:outline-none focus:border-amber-400/50">
+                <option value="">Seleccionar tour...</option>
+                @foreach (var t in Model.Tours)
+                {
+                    <option value="@t.Id" selected="@(t.Id == Model.Selected?.Id)">@t.Name - @t.Date @t.Time</option>
+                }
+            </select>
+        </form>
+
+        <form asp-action="Asignar" method="post" class="space-y-4">
+            <input type="hidden" name="TourId" value="@Model.Selected?.Id" />
+            @if (Model.Selected is { } tour)
+            {
+                <div class="bg-blue-500/8 border border-blue-500/15 rounded-xl px-4 py-3 text-sm">
+                    <div class="text-blue-300 font-medium">@tour.Name</div>
+                    <div class="text-slate-500 text-xs mt-0.5">Guia actual: @(tour.Guide != "" ? tour.Guide : "ninguno") - Vehiculo: @(tour.Vehicle != "" ? tour.Vehicle : "ninguno")</div>
+                </div>
+            }
+            <div class="space-y-1.5">
+                <label for="Guide" class="text-slate-400 text-xs font-medium">Guia turistico</label>
+                <select id="Guide" name="Guide" disabled="@(!hasTour)" class="w-full bg-[#0e1a2e] border border-[#1a2d48] rounded-xl px-4 py-3 text-slate-200 text-sm focus:outline-none focus:border-amber-400/50 disabled:opacity-40">
+                    <option value="">Seleccionar guia...</option>
+                    @foreach (var g in Model.Guides)
+                    {
+                        <option value="@g.Name" disabled="@g.Busy" selected="@(g.Name == Model.Guide)">@(g.Name + (g.Busy ? " - ocupado" : ""))</option>
+                    }
+                </select>
+            </div>
+            <div class="space-y-1.5">
+                <label for="Vehicle" class="text-slate-400 text-xs font-medium">Vehiculo</label>
+                <select id="Vehicle" name="Vehicle" disabled="@(!hasTour)" class="w-full bg-[#0e1a2e] border border-[#1a2d48] rounded-xl px-4 py-3 text-slate-200 text-sm focus:outline-none focus:border-amber-400/50 disabled:opacity-40">
+                    <option value="">Seleccionar vehiculo...</option>
+                    @foreach (var v in Model.Vehicles)
+                    {
+                        <option value="@v.Name" disabled="@v.Busy" selected="@(v.Name == Model.Vehicle)">@(v.Name + (v.Busy ? " - ocupado" : ""))</option>
+                    }
+                </select>
+            </div>
+            @if (Model.Error is not null)
+            {
+                <div class="bg-rose-500/10 border border-rose-500/25 rounded-xl px-4 py-3 text-rose-400 text-sm">@Model.Error</div>
+            }
+            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white py-3 rounded-xl text-sm font-medium transition-colors">Confirmar Asignacion</button>
+        </form>
+    </div>
+
+    <div class="max-w-2xl">
+        <div class="text-slate-400 text-sm font-medium mb-3">Asignaciones actuales</div>
+        <div class="bg-[#0e1a2e] border border-[#1a2d48] rounded-2xl overflow-hidden">
+            <table class="w-full text-sm">
+                <thead>
+                    <tr class="border-b border-[#162035]">
+                        @foreach (var h in new[] { "Tour", "Fecha", "Guia", "Vehiculo", "Cupos", "Accion" })
+                        {
+                            <th class="px-4 py-3 text-left text-xs text-slate-600 font-medium">@h</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var t in Model.Tours)
+                    {
+                        <tr class="border-b border-[#0f1a2e] hover:bg-[#0a1424] last:border-0">
+                            <td class="px-4 py-3 text-slate-200 font-medium">@t.Name</td>
+                            <td class="px-4 py-3 text-slate-500">@t.Date @t.Time</td>
+                            <td class="px-4 py-3">
+                                @if (t.Guide != "") { <span class="text-slate-300">@t.Guide</span> }
+                                else { <span class="text-amber-500 text-xs">Sin asignar</span> }
+                            </td>
+                            <td class="px-4 py-3">
+                                @if (t.Vehicle != "") { <span class="text-slate-300">@t.Vehicle</span> }
+                                else { <span class="text-amber-500 text-xs">Sin asignar</span> }
+                            </td>
+                            <td class="px-4 py-3 text-slate-400" style="@Ui.Mono">@t.Booked/@t.Capacity</td>
+                            <td class="px-4 py-3">
+                                @if (t.Guide != "" || t.Vehicle != "")
+                                {
+                                    <form asp-action="Liberar" method="post">
+                                        <input type="hidden" name="id" value="@t.Id" />
+                                        <button type="submit" title="Liberar recursos (HU-10 Esc.5)" class="text-xs px-2 py-1.5 text-slate-500 hover:text-amber-400 border border-slate-700 hover:border-amber-500/30 rounded-lg transition-colors">Liberar</button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,154 @@
+@model ReportsPageDto
+@{
+    ViewData["Title"] = "Reportes de Gestion";
+    ViewData["Nav"] = "Reportes";
+    var f = Model.Filter;
+    var tabs = new[] { ("ocupacion", "Ocupacion"), ("ingresos", "Ingresos"), ("servicios", "Servicios"), ("personal", "Personal") };
+    var route = new Dictionary<string, string> { ["DateFrom"] = f.DateFrom, ["DateTo"] = f.DateTo, ["NoData"] = f.NoData.ToString() };
+}
+<div class="p-6 space-y-5 h-full overflow-y-auto">
+    <div>
+        <h1 class="text-slate-100 font-semibold text-xl">Reportes de Gestion</h1>
+        <p class="text-slate-500 text-sm mt-0.5">Ocupacion, ingresos y desempeno del personal <span class="text-slate-700">(HU-13 - RF-13)</span></p>
+    </div>
+
+    <div class="flex items-center gap-3 flex-wrap">
+    <form asp-action="Reportes" method="get" class="contents">
+        <input type="hidden" name="Tab" value="@f.Tab" />
+        <div class="flex items-center gap-2 text-sm">
+            <label for="DateFrom" class="text-slate-500 text-xs">Desde:</label>
+            <input id="DateFrom" name="DateFrom" value="@f.DateFrom" class="bg-[#0e1a2e] border border-[#1a2d48] rounded-lg px-3 py-1.5 text-slate-200 text-sm focus:outline-none focus:border-amber-400/50 w-28" />
+        </div>
+        <div class="flex items-center gap-2 text-sm">
+            <label for="DateTo" class="text-slate-500 text-xs">Hasta:</label>
+            <input id="DateTo" name="DateTo" value="@f.DateTo" class="bg-[#0e1a2e] border border-[#1a2d48] rounded-lg px-3 py-1.5 text-slate-200 text-sm focus:outline-none focus:border-amber-400/50 w-28" />
+        </div>
+        <label class="flex items-center gap-2 text-xs text-slate-500 cursor-pointer">
+            <input type="checkbox" name="NoData" value="true" checked="@f.NoData" data-autosubmit class="accent-amber-400" />
+            Simular sin datos <span class="text-slate-700">(Esc.2)</span>
+        </label>
+        <button type="submit" class="hidden">Filtrar</button>
+    </form>
+    <form asp-action="Exportar" method="post" class="flex gap-2 ml-auto">
+        <input type="hidden" name="Tab" value="@f.Tab" />
+        <input type="hidden" name="DateFrom" value="@f.DateFrom" />
+        <input type="hidden" name="DateTo" value="@f.DateTo" />
+        <input type="hidden" name="NoData" value="@f.NoData.ToString().ToLowerInvariant()" />
+        <button type="submit" name="Format" value="PDF" class="flex items-center gap-1.5 px-3 py-1.5 text-xs border border-rose-500/20 text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors">@Ui.Ic(Icons.File, 13)PDF</button>
+        <button type="submit" name="Format" value="Excel" class="flex items-center gap-1.5 px-3 py-1.5 text-xs border border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/10 rounded-lg transition-colors">@Ui.Ic(Icons.Table, 13)Excel</button>
+    </form>
+    </div>
+
+    <div class="flex gap-1 bg-[#080f1c] p-1 rounded-xl w-fit">
+        @foreach (var (value, label) in tabs)
+        {
+            <a asp-action="Reportes" asp-all-route-data="route" asp-route-Tab="@value"
+               class="px-5 py-2 rounded-lg text-sm font-medium transition-colors @(f.Tab == value ? "bg-[#0e1a2e] text-slate-100" : "text-slate-600 hover:text-slate-400")">@label</a>
+        }
+    </div>
+
+    @if (f.NoData)
+    {
+        <div class="py-16 text-center max-w-lg">
+            <div class="text-slate-600 text-3xl mb-3">-</div>
+            <div class="text-slate-400 font-medium">Sin datos para el periodo seleccionado</div>
+            <div class="text-slate-600 text-sm mt-1">No hay registros entre @f.DateFrom y @f.DateTo. <span class="text-slate-700">(HU-13 Esc.2)</span></div>
+        </div>
+    }
+    else if (f.Tab == "ingresos")
+    {
+        <div class="max-w-lg">
+            <div class="bg-[#0e1a2e] border border-[#1a2d48] rounded-2xl p-5">
+                <div class="text-slate-400 text-sm font-medium mb-4">Ingresos por categoria</div>
+                @foreach (var d in Model.Income)
+                {
+                    <div class="mb-4">
+                        <div class="flex justify-between text-sm mb-1.5"><span class="text-slate-300">@d.Label</span><span class="text-amber-400 font-medium" style="@Ui.Mono">@Ui.Money(d.Amount)</span></div>
+                        <div class="h-2 bg-[#162035] rounded-full overflow-hidden"><div class="h-full bg-amber-500 rounded-full" style="width:@((d.Amount / Model.MaxIncome * 100).ToString("0.##", System.Globalization.CultureInfo.InvariantCulture))%"></div></div>
+                    </div>
+                }
+                <div class="pt-3 border-t border-[#162035] flex justify-between"><span class="text-slate-300 font-semibold text-sm">Total estimado</span><span class="text-amber-400 font-semibold" style="@Ui.Mono">@Ui.Money(Model.IncomeTotal)</span></div>
+            </div>
+        </div>
+    }
+    else if (f.Tab == "servicios")
+    {
+        <div class="max-w-lg">
+            <div class="bg-[#0e1a2e] border border-[#1a2d48] rounded-2xl overflow-hidden">
+                <table class="w-full text-sm">
+                    <thead><tr class="border-b border-[#162035]">
+                        @foreach (var h in new[] { "Servicio", "Solicitudes", "Ingresos" })
+                        {
+                            <th class="px-5 py-3.5 text-left text-xs text-slate-600 font-medium">@h</th>
+                        }
+                    </tr></thead>
+                    <tbody>
+                        @foreach (var d in Model.Services)
+                        {
+                            <tr class="border-b border-[#0f1a2e] last:border-0 hover:bg-[#0a1424]">
+                                <td class="px-5 py-4 text-slate-200">@d.Label</td>
+                                <td class="px-5 py-4 text-slate-400 font-mono">@d.Count</td>
+                                <td class="px-5 py-4 text-amber-400/80 font-mono">@Ui.Money(d.Total)</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+    else if (f.Tab == "personal")
+    {
+        <div class="max-w-2xl">
+            <div class="bg-[#0e1a2e] border border-[#1a2d48] rounded-2xl overflow-hidden">
+                <table class="w-full text-sm">
+                    <thead><tr class="border-b border-[#162035]">
+                        @foreach (var h in new[] { "Empleado", "Rol", "Estado", "Operaciones" })
+                        {
+                            <th class="px-5 py-3.5 text-left text-xs text-slate-600 font-medium">@h</th>
+                        }
+                    </tr></thead>
+                    <tbody>
+                        @foreach (var u in Model.StaffRows)
+                        {
+                            <tr class="border-b border-[#0f1a2e] last:border-0 hover:bg-[#0a1424]">
+                                <td class="px-5 py-4 text-slate-200">@u.Name</td>
+                                <td class="px-5 py-4">@Ui.Pill(Ui.RoleColor(u.Role), Ui.RoleLabel(u.Role))</td>
+                                <td class="px-5 py-4 text-xs @(u.Active ? "text-emerald-400" : "text-slate-600")">@(u.Active ? "Activo" : "Inactivo")</td>
+                                <td class="px-5 py-4 text-amber-400/80 font-mono">@u.Operations</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="max-w-lg space-y-4">
+            <div class="grid grid-cols-3 gap-3">
+                @foreach (var (label, value, color) in new[]
+                {
+                    ("Tasa ocupacion", $"{Model.OccupancyRate}%", "text-blue-400"),
+                    ("Hab. ocupadas", $"{Model.OccupiedCount}/{Model.TotalRooms}", "text-rose-400"),
+                    ("Disponibles", Model.AvailableCount.ToString(), "text-emerald-400"),
+                })
+                {
+                    <div class="bg-[#0e1a2e] border border-[#1a2d48] rounded-xl p-4 text-center">
+                        <div class="text-2xl font-semibold @color" style="@Ui.Mono">@value</div>
+                        <div class="text-slate-600 text-xs mt-1">@label</div>
+                    </div>
+                }
+            </div>
+            <div class="bg-[#0e1a2e] border border-[#1a2d48] rounded-2xl p-5">
+                <div class="text-slate-400 text-sm font-medium mb-4">Ocupacion por tipo</div>
+                @foreach (var d in Model.Occupancy)
+                {
+                    <div class="mb-4">
+                        <div class="flex justify-between text-sm mb-1.5"><span class="text-slate-300">@d.Label</span><span class="text-slate-500" style="@Ui.Mono">@d.Occupied/@d.Total (@d.Percent%)</span></div>
+                        <div class="h-2 bg-[#162035] rounded-full overflow-hidden"><div class="h-full bg-blue-500 rounded-full" style="width:@(d.Percent)%"></div></div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>

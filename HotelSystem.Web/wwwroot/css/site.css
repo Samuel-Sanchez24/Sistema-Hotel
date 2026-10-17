@@ -1,31 +1,25 @@
-html {
-  font-size: 14px;
-}
-
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
-}
-
+/*
+ * hotel.css contiene el Tailwind compilado del prototipo (Figma Make).
+ * Aqui solo van utilidades que el prototipo no necesitaba al ser React
+ * (enlaces y formularios que reemplazan a los <button> con onClick).
+ */
 body {
-  margin-bottom: 60px;
+  background: #080f1c;
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
+.block {
+  display: block;
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+.inline-block {
+  display: inline-block;
+}
+
+.contents {
+  display: contents;
+}
+
+select option {
+  background: #0e1a2e;
+  color: #e2e8f0;
 }

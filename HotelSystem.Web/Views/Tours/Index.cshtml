@@ -1,0 +1,76 @@
+@model ToursPanelDto
+@{
+    ViewData["Title"] = "Panel de Tours";
+    ViewData["Nav"] = "Index";
+}
+<div class="p-6 space-y-6 h-full overflow-y-auto">
+    <div>
+        <h1 class="text-slate-100 font-semibold text-xl">Panel de Tours</h1>
+        <p class="text-slate-500 text-sm mt-0.5">Cupos y estado de excursiones <span class="text-slate-700">(HU-10 - RN-11)</span></p>
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        @foreach (var tour in Model.Tours)
+        {
+            <div class="bg-[#0e1a2e] border border-[#1a2d48] rounded-2xl p-5 hover:border-[#253d60] transition-colors">
+                <div class="flex items-start justify-between mb-3">
+                    <div>
+                        <div class="text-slate-100 font-semibold">@tour.Name</div>
+                        <div class="text-slate-500 text-sm mt-0.5">@tour.Destination</div>
+                    </div>
+                    @if (tour.IsFull)
+                    {
+                        @Ui.Pill("bg-rose-500/10 text-rose-400 border-rose-500/20", "Lleno")
+                    }
+                    else
+                    {
+                        @Ui.Pill("bg-emerald-500/10 text-emerald-400 border-emerald-500/20", "Disponible")
+                    }
+                </div>
+                <div class="flex gap-4 text-xs text-slate-500 mb-4">
+                    <span>@tour.Date</span><span>@tour.Time</span><span>@Ui.Money(tour.Price)</span>
+                </div>
+                <div class="mb-3">
+                    <div class="flex justify-between text-xs mb-1">
+                        <span class="text-slate-500">Cupos</span>
+                        <span class="@(tour.IsFull ? "text-rose-400" : "text-slate-400")" style="@Ui.Mono">@tour.Booked/@tour.Capacity</span>
+                    </div>
+                    <div class="h-1.5 bg-[#162035] rounded-full overflow-hidden">
+                        <div class="h-full rounded-full transition-all @Ui.QuotaBarColor(tour)" style="width:@(tour.Percent)%"></div>
+                    </div>
+                </div>
+                <div class="flex gap-4 text-xs mb-4">
+                    <div class="flex items-center gap-1.5 @(tour.Guide != "" ? "text-slate-400" : "text-amber-500")">@Ui.Ic(Icons.User, 12)@(tour.Guide != "" ? tour.Guide : "Sin guia")</div>
+                    <div class="flex items-center gap-1.5 @(tour.Vehicle != "" ? "text-slate-400" : "text-amber-500")">@Ui.Ic(Icons.Swap, 12)@(tour.Vehicle != "" ? tour.Vehicle : "Sin vehiculo")</div>
+                </div>
+                <div class="flex gap-2">
+                    <a asp-action="Index" asp-route-detalle="@tour.Id" class="flex-1 text-center text-blue-400 text-xs py-2 border border-blue-500/20 hover:border-blue-500/40 rounded-xl transition-colors">Ver detalle</a>
+                    <form asp-action="AjustarCupo" method="post" class="contents">
+                        <input type="hidden" name="id" value="@tour.Id" />
+                        <button type="submit" name="delta" value="1" disabled="@tour.IsFull" class="px-3 py-2 text-xs text-emerald-400 border border-emerald-500/20 hover:bg-emerald-400/5 rounded-xl transition-colors disabled:opacity-30 disabled:cursor-not-allowed">+1</button>
+                        <button type="submit" name="delta" value="-1" disabled="@(tour.Booked <= 0)" title="Liberar cupo" class="px-3 py-2 text-xs text-amber-400 border border-amber-500/20 hover:bg-amber-400/5 rounded-xl transition-colors disabled:opacity-30 disabled:cursor-not-allowed">-1</button>
+                    </form>
+                </div>
+            </div>
+        }
+    </div>
+
+    @if (Model.Selected is { } sel)
+    {
+        var rows = new[]
+        {
+            ("Fecha", sel.Date), ("Hora", sel.Time), ("Precio", Ui.Money(sel.Price)),
+            ("Cupos", $"{sel.Booked} reservados - {sel.FreeSpots} libres"),
+            ("Guia", sel.Guide != "" ? sel.Guide : "No asignado"),
+            ("Vehiculo", sel.Vehicle != "" ? sel.Vehicle : "No asignado"),
+        };
+        @Ui.ModalOpen(sel.Name, Url.Action("Index")!)
+        <p class="text-slate-500 text-sm mb-4">@sel.Destination</p>
+        @foreach (var (k, v) in rows)
+        {
+            <div class="flex justify-between py-2.5 border-b border-[#162035] last:border-0">
+                <span class="text-slate-500 text-sm">@k</span><span class="text-slate-200 text-sm">@v</span>
+            </div>
+        }
+        @Ui.ModalClose()
+    }
+</div>

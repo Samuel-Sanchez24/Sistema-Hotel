@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Hotel Fast and Furious</title>
+    <link rel="stylesheet" href="~/css/hotel.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <div id="root">
+        <div class="flex h-full bg-[#080f1c]">
+            <partial name="_Sidebar" />
+            <main class="flex-1 overflow-y-auto bg-[#0a1220]">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+    <partial name="_Toast" />
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,82 @@
+@model LoginPageDto
+@{
+    ViewData["Title"] = "Iniciar sesion";
+    Layout = "_AuthLayout";
+}
+<div class="min-h-screen bg-[#080f1c] flex flex-col items-center justify-center p-6">
+    <div class="mb-10 text-center">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-amber-400 mb-5">
+            <span class="text-[#080f1c] font-bold text-2xl" style="@Ui.Mono">FF</span>
+        </div>
+        <h1 class="text-white font-semibold text-2xl tracking-tight mb-1">Hotel Fast and Furious</h1>
+        <p class="text-slate-500 text-sm">Sistema de Gestion Hotelera</p>
+    </div>
+
+    @if (Model.SelectedRole is null)
+    {
+        <p class="text-slate-500 text-xs mb-5">Seleccione su perfil para continuar <span class="text-slate-700">(HU-02)</span></p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 w-full max-w-3xl">
+            @foreach (var r in Model.Roles)
+            {
+                <a asp-action="Login" asp-route-role="@r.Role"
+                   class="block group bg-[#0e1a2e] border border-[#1a2d48] rounded-2xl p-5 text-left hover:border-amber-400/40 hover:bg-[#11203a] transition-all duration-200 cursor-pointer">
+                    <div class="flex items-start gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-[#162440] flex items-center justify-center text-amber-400/80 flex-shrink-0 group-hover:bg-amber-400/10 group-hover:text-amber-400 transition-all">
+                            @Ui.Ic(r.Icon, 18)
+                        </div>
+                        <div class="min-w-0">
+                            <div class="text-slate-100 font-semibold text-sm">@r.Label</div>
+                            <div class="text-slate-500 text-xs mt-0.5 leading-relaxed">@r.Description</div>
+                            <div class="text-slate-600 text-xs mt-2.5">Demo: <span class="text-slate-500">@r.DemoName</span></div>
+                        </div>
+                    </div>
+                </a>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="w-full max-w-sm">
+            <form asp-action="Login" method="post" class="bg-[#0e1a2e] border border-[#1a2d48] rounded-2xl p-7 space-y-4">
+                <input type="hidden" name="Role" value="@Model.SelectedRole" />
+                <div class="flex items-center gap-3 mb-2">
+                    <a asp-action="Login" class="text-slate-600 hover:text-slate-300 transition-colors">@Ui.Ic(Icons.Back, 16)</a>
+                    <div>
+                        <div class="text-slate-100 font-semibold">@Ui.RoleLabel(Model.SelectedRole.Value)</div>
+                        <div class="text-slate-600 text-xs">Ingrese sus credenciales</div>
+                    </div>
+                </div>
+
+                <div class="space-y-1.5">
+                    <label for="Username" class="text-slate-400 text-xs font-medium">Usuario</label>
+                    <input id="Username" name="Username" value="@Model.Username" autocomplete="username"
+                           class="w-full bg-[#0a1424] border border-[#1a2d48] rounded-xl px-4 py-3 text-slate-200 text-sm focus:outline-none focus:border-amber-400/50 transition-colors"
+                           placeholder="nombre.usuario" />
+                </div>
+
+                <div class="space-y-1.5">
+                    <label for="Password" class="text-slate-400 text-xs font-medium">Contraseña</label>
+                    <input id="Password" name="Password" type="password" autocomplete="current-password" autofocus
+                           class="w-full bg-[#0a1424] border border-[#1a2d48] rounded-xl px-4 py-3 text-slate-200 text-sm focus:outline-none focus:border-amber-400/50 transition-colors"
+                           placeholder="contrasena" />
+                    <p class="text-slate-700 text-xs">Demo: <span class="font-mono text-slate-600">@Model.DemoPassword</span></p>
+                </div>
+
+                @if (Model.Error is not null)
+                {
+                    <div class="bg-rose-500/10 border border-rose-500/25 rounded-xl px-4 py-3 text-rose-400 text-sm leading-relaxed">@Model.Error</div>
+                }
+
+                <button type="submit" class="w-full bg-amber-400 hover:bg-amber-300 text-[#080f1c] font-semibold py-3 rounded-xl text-sm transition-colors">
+                    Iniciar sesion
+                </button>
+
+                <div class="bg-[#0a1424] rounded-xl px-3 py-2.5 text-xs text-slate-600">
+                    Para HU-02 Esc.2: escriba una contrasena incorrecta.<br />
+                    Para Esc.3: use usuario <span class="text-slate-500 font-mono">jherrera</span> (cuenta desactivada).
+                </div>
+            </form>
+        </div>
+    }
+    <p class="mt-10 text-slate-700 text-xs">Front del sistema hotelero</p>
+</div>

@@ -1,0 +1,78 @@
+@model GuestServiceRequestPageDto
+@{
+    ViewData["Title"] = "Solicitar Servicio";
+    ViewData["Nav"] = "SolicitarServicio";
+}
+<div class="p-6 space-y-6 h-full overflow-y-auto">
+    <div>
+        <h1 class="text-slate-100 font-semibold text-xl">Solicitar Servicio</h1>
+        <p class="text-slate-500 text-sm mt-0.5">Catalogo disponible - Hab. @Model.RoomNumber <span class="text-slate-700">(HU-07)</span></p>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl">
+        <div class="space-y-4">
+            <div class="text-slate-400 text-sm font-medium">Servicios disponibles</div>
+            @foreach (var cat in Model.Categories)
+            {
+                <div>
+                    <div class="text-slate-600 text-xs font-medium mb-2 uppercase tracking-wide">@cat.Key</div>
+                    <div class="space-y-2">
+                        @foreach (var svc in cat)
+                        {
+                            <a asp-action="SolicitarServicio" asp-route-servicio="@svc.Id"
+                               class="block w-full bg-[#0e1a2e] border rounded-xl px-4 py-3 text-left transition-all @(Model.Selected?.Id == svc.Id ? "border-amber-400/50 bg-amber-400/5" : "border-[#1a2d48] hover:border-[#253d60]")">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-slate-200 text-sm font-medium">@svc.Name</span>
+                                    @if (svc.Price is { } price)
+                                    {
+                                        <span class="text-amber-400/80 text-xs" style="@Ui.Mono">@Ui.Money(price)</span>
+                                    }
+                                </div>
+                                <div class="text-slate-600 text-xs mt-0.5">@svc.Description</div>
+                            </a>
+                        }
+                    </div>
+                </div>
+            }
+            <p class="text-slate-700 text-xs">La solicitud se asocia a la habitacion con check-in activo (HU-07 Esc.1).</p>
+        </div>
+        <div class="space-y-4">
+            <div class="text-slate-400 text-sm font-medium">Mi solicitud</div>
+            @if (Model.Selected is { } sel)
+            {
+                <form asp-action="Solicitar" method="post" class="bg-[#0e1a2e] border border-[#1a2d48] rounded-2xl p-5 space-y-4">
+                    <input type="hidden" name="servicioId" value="@sel.Id" />
+                    <div>
+                        <div class="text-slate-100 font-semibold">@sel.Name</div>
+                        <div class="text-slate-500 text-sm mt-0.5">@sel.Description</div>
+                        @if (sel.Price is { } price)
+                        {
+                            <div class="text-amber-400 text-sm mt-1">@Ui.Money(price)</div>
+                        }
+                    </div>
+                    <div class="bg-[#0a1424] rounded-xl px-3 py-2.5 text-xs text-slate-500">Asociado a <span class="text-slate-300">Hab. @Model.RoomNumber</span> - @Model.GuestName</div>
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 text-white py-3 rounded-xl text-sm font-medium transition-colors">Enviar Solicitud</button>
+                </form>
+            }
+            else
+            {
+                <div class="bg-[#0e1a2e] border border-[#1a2d48] rounded-2xl p-8 text-center text-slate-600 text-sm">Seleccione un servicio para continuar</div>
+            }
+            @if (Model.Requests.Count > 0)
+            {
+                <div class="space-y-2">
+                    <div class="text-slate-500 text-xs font-medium">Solicitudes enviadas</div>
+                    @foreach (var r in Model.Requests)
+                    {
+                        <div class="bg-[#0e1a2e] border border-[#162035] rounded-xl px-4 py-3 flex justify-between items-center">
+                            <div>
+                                <div class="text-slate-300 text-sm">@r.ServiceName</div>
+                                <div class="text-slate-600 text-xs">@r.RequestedAt</div>
+                            </div>
+                            @Ui.Pill("bg-amber-400/10 text-amber-400 border-amber-400/20", "Pendiente")
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>
