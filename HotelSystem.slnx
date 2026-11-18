@@ -4,10 +4,14 @@
     <Project Path="HotelSystem.Domain/HotelSystem.Domain.csproj" Id="f434372d-e566-44e6-bc60-b26ba744e824" />
   </Folder>
   <Folder Name="/Infrastructure/">
+    <Project Path="HotelSystem.Infrastructure/HotelSystem.Infrastructure.csproj" Id="3b8e2f1a-6c4d-4f7e-9a21-5d0c8b7e4a19" />
     <Project Path="HotelSystem.Persistence/HotelSystem.Persistence.csproj" Id="f7bd6760-afea-47f8-ae84-564fb7af692e" />
   </Folder>
   <Folder Name="/Presenters/">
     <Project Path="HotelSystem.API/HotelSystem.API.csproj" Id="7c202f1b-4483-423a-9476-0e4fb347377f" />
     <Project Path="HotelSystem.Web/HotelSystem.Web.csproj" Id="14b506b4-979d-49ca-a96d-d0979e012dc4" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="HotelSystem.Tests/HotelSystem.Tests.csproj" Id="9d4a7c2e-1f3b-4e8a-b6d5-7a2c9e0f3b41" />
   </Folder>
 </Solution>

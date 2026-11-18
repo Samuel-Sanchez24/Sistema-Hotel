@@ -7,7 +7,22 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- Autenticacion con tokens JWT (cabecera Authorization: Bearer). -->
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.*" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.11" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HotelSystem.Application\HotelSystem.Application.csproj" />
+    <ProjectReference Include="..\HotelSystem.Infrastructure\HotelSystem.Infrastructure.csproj" />
+    <ProjectReference Include="..\HotelSystem.Persistence\HotelSystem.Persistence.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Ejemplo de la plantilla de Visual Studio. Ya no existe; se excluye por si queda en disco
+         al copiar esta version sobre una anterior. -->
+    <Compile Remove="Controllers\WeatherForecastController.cs" />
+    <Compile Remove="WeatherForecast.cs" />
   </ItemGroup>
 
 </Project>
