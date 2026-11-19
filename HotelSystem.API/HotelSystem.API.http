@@ -1,6 +1,98 @@
-@HotelSystem.API_HostAddress = http://localhost:5270
+# Pruebas rapidas de la API desde Visual Studio (boton "Send request" sobre cada bloque).
+# 1) Ejecute el bloque de login, copie el "token" de la respuesta y peguelo en @token.
+# 2) Los demas bloques ya usan ese token.
 
-GET {{HotelSystem.API_HostAddress}}/weatherforecast/
-Accept: application/json
+@api = https://localhost:7001
+@token = PEGUE_AQUI_EL_TOKEN
 
-###
+### Login (HU-02). Otros usuarios: mlopez/recep2026, amartinez/hk2026, ltorres/coord2026, pgomez/serv2026, rsilva/admin2026
+POST {{api}}/api/auth/login
+Content-Type: application/json
+
+{ "usuario": "valentina.lagos", "contrasena": "guest2026" }
+
+### Mis reservas (huesped)
+GET {{api}}/api/reservas/mias
+Authorization: Bearer {{token}}
+
+### Habitaciones disponibles (HU-03, RN-01)
+GET {{api}}/api/habitaciones/disponibles?tipo=DOBLE&fechaIngreso=2026-12-10&fechaSalida=2026-12-13&cantidadHuespedes=2
+Authorization: Bearer {{token}}
+
+### Reservar habitacion (HU-03, HU-04). Use un numero que haya salido en la busqueda anterior.
+POST {{api}}/api/reservas/habitacion
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "numeroHabitacion": "204",
+  "fechaIngreso": "2026-12-10",
+  "fechaSalida": "2026-12-13",
+  "cantidadHuespedes": 2,
+  "metodoPago": "TARJETA",
+  "detallePago": "Visa **** 4242",
+  "mayorDeEdad": true
+}
+
+### Cancelar una reserva (RN-09)
+POST {{api}}/api/reservas/RES-001/cancelar
+Authorization: Bearer {{token}}
+
+### Mi cuenta (HU-12): alojamiento + servicios + tours
+GET {{api}}/api/cuentas/mia/prefactura
+Authorization: Bearer {{token}}
+
+### Tours (HU-09)
+GET {{api}}/api/tours
+Authorization: Bearer {{token}}
+
+### --- Con token de recepcion (mlopez / recep2026) ---
+
+### Panel de habitaciones (HU-05)
+GET {{api}}/api/habitaciones
+Authorization: Bearer {{token}}
+
+### Llegadas de hoy (HU-06)
+GET {{api}}/api/recepcion/llegadas-hoy
+Authorization: Bearer {{token}}
+
+### Prefactura de una habitacion ocupada (HU-12)
+GET {{api}}/api/cuentas/102/prefactura
+Authorization: Bearer {{token}}
+
+### Cerrar la cuenta en el check-out (HU-06). El monto debe ser igual al montoConsolidado.
+POST {{api}}/api/cuentas/102/cerrar
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "montoPagado": 0, "metodoPago": "EFECTIVO" }
+
+### --- Con token de housekeeping (amartinez / hk2026) ---
+
+### Cambiar estado (HU-11, patron State / RN-02)
+PATCH {{api}}/api/habitaciones/1/estado
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "estado": "MANTENIMIENTO", "nota": "Fuga en el lavamanos" }
+
+### Plan de limpieza (RF-10)
+GET {{api}}/api/housekeeping/plan-limpieza
+Authorization: Bearer {{token}}
+
+### --- Con token de administrador (rsilva / admin2026) ---
+
+### Reporte de gestion (HU-13)
+GET {{api}}/api/reportes?desde=2026-11-01&hasta=2026-11-30
+Authorization: Bearer {{token}}
+
+### Exportar a Excel (patron Strategy)
+GET {{api}}/api/reportes/exportar?formato=excel&desde=2026-11-01&hasta=2026-11-30
+Authorization: Bearer {{token}}
+
+### Crear empleado (HU-01, Factory Method)
+POST {{api}}/api/usuarios
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "nombre": "Sara Mejia", "correo": "smejia@hotelff.com", "rol": "RECEPCION" }
