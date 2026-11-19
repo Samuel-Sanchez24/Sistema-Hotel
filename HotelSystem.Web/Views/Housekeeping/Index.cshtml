@@ -1,10 +1,12 @@
 @model HousekeepingPanelDto
+@inject HotelSystem.Application.Reservas.PanelHousekeeping Panel
 @{
     ViewData["Title"] = "Estado de Habitaciones";
     ViewData["Nav"] = "Index";
     var filters = new[] { ("all", "Todas pendientes"), ("en_limpieza", "En limpieza"), ("mantenimiento", "Mantenimiento") };
 }
-<div class="p-4 sm:p-6 space-y-5 h-full overflow-y-auto">
+@* Panel en vivo: se recarga solo cuando recepcion libera una habitacion o cambia su estado. *@
+<div class="p-4 sm:p-6 space-y-5 h-full overflow-y-auto" data-live-url="@Url.Action("Version", "Eventos", new { panel = "housekeeping" })" data-live-version="@Panel.Version">
     <div>
         <h1 class="text-slate-100 font-semibold text-xl">Estado de Habitaciones</h1>
         <p class="text-slate-500 text-sm mt-0.5">Actualice desde su dispositivo <span class="text-slate-700">(HU-11 - RNF-09)</span></p>

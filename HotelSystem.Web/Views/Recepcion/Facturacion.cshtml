@@ -42,6 +42,10 @@
                     <div class="text-emerald-400 font-semibold">Cuenta cerrada correctamente</div>
                     <div class="text-slate-500 text-sm">@sel.GuestName - Hab. @sel.Number - @Model.PayMethod</div>
                     <div class="text-amber-400 font-semibold text-lg" style="@Ui.Mono">@Ui.Money(Model.GrandTotal)</div>
+                    @if (Model.PrefacturaId is { } numero)
+                    {
+                        <div class="text-slate-500 text-xs">Prefactura final No. @numero</div>
+                    }
                     <div class="text-slate-600 text-xs">Cuenta cerrada y habitacion en limpieza. No se pueden agregar mas consumos. (RN-02 - RN-06 - RN-07 - HU-06 Esc.3)</div>
                     <a asp-action="Facturacion" class="inline-block mt-2 text-blue-400 text-sm hover:text-blue-300">Gestionar otro huesped</a>
                 </div>
@@ -83,6 +87,22 @@
                         else
                         {
                             <div class="pt-2 border-t border-[#162035] text-slate-600 text-sm">Servicios adicionales: @Ui.Money(0) <span class="text-slate-700">(HU-12 Esc.2)</span></div>
+                        }
+                        @if (Model.Tours.Count > 0)
+                        {
+                            <div class="pt-3 border-t border-[#162035]">
+                                <div class="text-slate-500 text-xs font-medium mb-2">Tours <span class="text-slate-700">(RN-07)</span></div>
+                                @foreach (var t in Model.Tours)
+                                {
+                                    <div class="flex justify-between py-1.5">
+                                        <div>
+                                            <div class="text-slate-300 text-sm">@t.Name</div>
+                                            <div class="text-slate-600 text-xs">@t.Date - @t.Persons persona(s)</div>
+                                        </div>
+                                        <span class="text-slate-300 text-sm" style="@Ui.Mono">@Ui.Money(t.Total)</span>
+                                    </div>
+                                }
+                            </div>
                         }
                         <div class="pt-3 border-t border-[#253d60] flex justify-between items-center">
                             <span class="text-slate-100 font-semibold">Total</span>

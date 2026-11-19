@@ -1,3 +1,4 @@
+using HotelSystem.Application.Housekeeping;
 using HotelSystem.Web.DTOs.Common;
 using HotelSystem.Web.DTOs.Housekeeping;
 using HotelSystem.Web.Filters;
@@ -8,14 +9,14 @@ using Microsoft.AspNetCore.Mvc;
 namespace HotelSystem.Web.Controllers;
 
 [RoleAuthorize(Role.Housekeeping)]
-public class HousekeepingController(IHotelDataService data) : HotelControllerBase(data)
+public class HousekeepingController(IHabitacionService habitaciones) : HotelControllerBase
 {
     /* ─── HU-11: Estado de habitaciones e incidencias ─── */
 
     public IActionResult Index(string filtro = "all", int? incidencia = null)
     {
         var model = BuildPanel(filtro);
-        model.IncidentRoom = incidencia is null ? null : Data.GetRoom(incidencia.Value);
+        model.IncidentRoom = incidencia is null ? null : habitaciones.Obtener(incidencia.Value)?.AWeb();
         return View(model);
     }
 
@@ -23,12 +24,13 @@ public class HousekeepingController(IHotelDataService data) : HotelControllerBas
     [ValidateAntiForgeryToken]
     public IActionResult ActualizarEstado(UpdateRoomStatusDto dto)
     {
-        var room = Data.GetRoom(dto.RoomId);
-        if (room is not null)
-        {
-            Data.SetRoomStatus(dto.RoomId, dto.NewStatus);
-            Toast($"Hab. {room.Number} - {Ui.Sc(dto.NewStatus).Label}");
-        }
+        // El backend aplica el patron State: una transicion no permitida (RN-02) vuelve como mensaje.
+        HabitacionDto? actualizada = null;
+        var error = Intentar(() => actualizada = habitaciones.CambiarEstado(dto.RoomId, dto.NewStatus.ADominio(), null, UsuarioId));
+
+        if (error is not null || actualizada is null) Toast(error ?? "No fue posible actualizar la habitacion.", ToastType.Error);
+        else Toast($"Hab. {actualizada.Numero} - {Ui.Sc(dto.NewStatus).Label}");
+
         return RedirectToAction(nameof(Index), new { filtro = dto.Filter });
     }
 
@@ -36,18 +38,22 @@ public class HousekeepingController(IHotelDataService data) : HotelControllerBas
     [ValidateAntiForgeryToken]
     public IActionResult ReportarIncidencia(ReportIncidentDto dto)
     {
-        var room = Data.GetRoom(dto.RoomId);
+        var room = habitaciones.Obtener(dto.RoomId)?.AWeb();
         if (room is null) return RedirectToAction(nameof(Index), new { filtro = dto.Filter });
 
-        if (string.IsNullOrWhiteSpace(dto.Note))
+        // La descripcion es obligatoria (HU-11 Esc.3): el backend rechaza la incidencia sin nota
+        // y tambien las transiciones que la RN-02 no permite.
+        var nota = dto.Note?.Trim();
+        var error = Intentar(() => habitaciones.CambiarEstado(dto.RoomId, RoomStatus.Mantenimiento.ADominio(), nota, UsuarioId));
+        if (error is not null)
         {
             var model = BuildPanel(dto.Filter);
             model.IncidentRoom = room;
-            model.IncidentError = "Debe ingresar una descripcion de la incidencia (HU-11 Esc.3).";
+            model.IncidentNote = dto.Note;
+            model.IncidentError = error;
             return View(nameof(Index), model);
         }
 
-        Data.SetRoomStatus(dto.RoomId, RoomStatus.Mantenimiento, dto.Note.Trim());
         Toast($"Hab. {room.Number} - {Ui.Sc(RoomStatus.Mantenimiento).Label}");
         return RedirectToAction(nameof(Index), new { filtro = dto.Filter });
     }
@@ -56,23 +62,22 @@ public class HousekeepingController(IHotelDataService data) : HotelControllerBas
 
     public IActionResult PlanLimpieza()
     {
-        var pending = Data.GetRooms().Where(r => r.Status == RoomStatus.EnLimpieza).ToList();
-        var tasks = pending
-            .Select(r => new CleaningTaskDto(r, MockData.ArrivalsToday.Contains(r.Number)))
-            .OrderBy(t => t.IsUrgent ? 0 : 1)
+        // El backend ordena: primero las habitaciones con llegada hoy, luego las que llevan mas tiempo esperando.
+        var tasks = habitaciones.PlanLimpieza()
+            .Select(t => new CleaningTaskDto(t.Habitacion.AWeb(), t.LlegadaHoy))
             .ToList();
 
         return View(new CleaningPlanDto
         {
             Tasks = tasks,
             ArrivalsTodayCount = tasks.Count(t => t.IsUrgent),
-            PendingCount = pending.Count,
+            PendingCount = tasks.Count,
         });
     }
 
     private HousekeepingPanelDto BuildPanel(string filter)
     {
-        var rooms = Data.GetRooms();
+        var rooms = habitaciones.Listar().Select(h => h.AWeb()).ToList();
         var shown = filter switch
         {
             "en_limpieza" => rooms.Where(r => r.Status == RoomStatus.EnLimpieza),

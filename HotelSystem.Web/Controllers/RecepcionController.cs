@@ -1,29 +1,42 @@
+using System.Globalization;
+using HotelSystem.Application.CierreCuenta;
+using HotelSystem.Application.Housekeeping;
+using HotelSystem.Application.Reservas;
+using HotelSystem.Domain.Entidades;
 using HotelSystem.Web.DTOs.Common;
 using HotelSystem.Web.DTOs.Recepcion;
 using HotelSystem.Web.Filters;
+using HotelSystem.Web.Helpers;
 using HotelSystem.Web.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HotelSystem.Web.Controllers;
 
 [RoleAuthorize(Role.Recepcion)]
-public class RecepcionController(IHotelDataService data) : HotelControllerBase(data)
+public class RecepcionController(
+    IHabitacionService habitaciones,
+    IReservaService reservas,
+    ICuentaService cuentas,
+    PanelRecepcion panel) : HotelControllerBase
 {
-    /// <summary>Noches facturadas en la prefactura del prototipo.</summary>
-    private const int BillingNights = 4;
-
     /* ─── HU-05: Panel de habitaciones ─── */
 
     public IActionResult Index(int piso = 1, RoomStatus? estado = null, int? hab = null)
     {
-        var rooms = Data.GetRooms();
+        var rooms = habitaciones.Listar().Select(h => h.AWeb()).ToList();
         return View(new RoomsPanelDto
         {
             Floor = piso,
             Filter = estado,
             FloorRooms = rooms.Where(r => r.Floor == piso && (estado is null || r.Status == estado)).ToList(),
             Counts = Enum.GetValues<RoomStatus>().ToDictionary(s => s, s => rooms.Count(r => r.Status == s)),
-            Selected = hab is null ? null : rooms.FirstOrDefault(r => r.Id == hab),
+            Selected = hab is null ? null : rooms.FirstOrDefault(r => r.Id == hab.Value),
+
+            // Observer: cambios de estado que las habitaciones notificaron al panel de recepcion.
+            News = panel.UltimasNovedades
+                .Take(6)
+                .Select(n => new RoomNewsDto(n.Numero, n.EstadoAnterior.AWeb(), n.EstadoNuevo.AWeb(), Ui.Stamp(n.Momento)))
+                .ToList(),
         });
     }
 
@@ -31,8 +44,8 @@ public class RecepcionController(IHotelDataService data) : HotelControllerBase(d
 
     public IActionResult CheckInOut(string tab = "checkin", string? q = null)
     {
-        var checkIns = Data.GetTodayCheckIns();
-        var checkOuts = Data.GetTodayCheckOuts();
+        var checkIns = reservas.LlegadasDeHoy().Select(m => m.AWeb()).ToList();
+        var checkOuts = reservas.SalidasDeHoy().Select(m => m.AWeb()).ToList();
         var list = tab == "checkout" ? checkOuts : checkIns;
         if (!string.IsNullOrWhiteSpace(q))
             list = list.Where(i => i.GuestName.Contains(q, StringComparison.OrdinalIgnoreCase) || i.RoomNumber.Contains(q)).ToList();
@@ -51,8 +64,16 @@ public class RecepcionController(IHotelDataService data) : HotelControllerBase(d
     [ValidateAntiForgeryToken]
     public IActionResult CheckIn(string id)
     {
-        var item = Data.RegisterCheckIn(id);
-        if (item is not null) Toast($"Check-in: {item.GuestName} - Hab. {item.RoomNumber}");
+        if (ReservaHabitacion.TryIdDesdeCodigo(id, out var reservaId))
+        {
+            // El backend exige que la habitacion este Disponible (RN-02) y la deja Ocupada.
+            MovimientoDto? movimiento = null;
+            var error = Intentar(() => movimiento = reservas.RegistrarCheckIn(reservaId, UsuarioId));
+
+            if (error is not null || movimiento is null) Toast(error ?? "No fue posible registrar el check-in.", ToastType.Error);
+            else Toast($"Check-in: {movimiento.Huesped} - Hab. {movimiento.NumeroHabitacion}");
+        }
+
         return RedirectToAction(nameof(CheckInOut), new { tab = "checkin" });
     }
 
@@ -60,9 +81,9 @@ public class RecepcionController(IHotelDataService data) : HotelControllerBase(d
 
     public IActionResult Facturacion(string? q = null, int? hab = null, string? numero = null, bool generada = false)
     {
-        var occupied = Data.GetRooms().Where(r => r.Status == RoomStatus.Ocupada).ToList();
+        var occupied = OccupiedRooms();
         var selected = hab is not null
-            ? occupied.FirstOrDefault(r => r.Id == hab)
+            ? occupied.FirstOrDefault(r => r.Id == hab.Value)
             : numero is not null ? occupied.FirstOrDefault(r => r.Number == numero) : null;
 
         var model = BuildBilling(selected, generada);
@@ -74,54 +95,74 @@ public class RecepcionController(IHotelDataService data) : HotelControllerBase(d
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult GenerarPrefactura(int hab) =>
-        RedirectToAction(nameof(Facturacion), new { hab, generada = true });
+    public IActionResult GenerarPrefactura(int hab)
+    {
+        // Fachada: una sola llamada consolida alojamiento, servicios y tours, y guarda la prefactura.
+        var error = Intentar(() => cuentas.GenerarPrefactura(hab, UsuarioId));
+        if (error is not null)
+        {
+            Toast(error, ToastType.Error);
+            return RedirectToAction(nameof(Facturacion));
+        }
+
+        return RedirectToAction(nameof(Facturacion), new { hab, generada = true });
+    }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
     public IActionResult CerrarCuenta(BillingPaymentDto dto)
     {
-        var room = Data.GetRoom(dto.RoomId);
-        if (room is null || room.Status != RoomStatus.Ocupada) return RedirectToAction(nameof(Facturacion));
+        var room = OccupiedRooms().FirstOrDefault(r => r.Id == dto.RoomId);
+        if (room is null) return RedirectToAction(nameof(Facturacion));
 
         var model = BuildBilling(room, generated: true);
         model.Query = room.GuestName;
         model.PayMethod = dto.PayMethod;
         model.PaidAmount = dto.PaidAmount;
 
-        if (string.IsNullOrEmpty(dto.PayMethod))
-        {
-            model.Error = "Seleccione un metodo de pago para cerrar la cuenta (RN-07 - HU-06).";
-            return View(nameof(Facturacion), model);
-        }
-
         var digits = new string((dto.PaidAmount ?? "").Where(char.IsDigit).ToArray());
-        var paid = digits.Length == 0 ? 0 : decimal.Parse(digits);
-        if (paid != model.GrandTotal)
-        {
-            model.Error = $"El monto pagado debe coincidir con la prefactura: {Helpers.Ui.Money(model.GrandTotal)} (HU-06 Esc.5).";
-            return View(nameof(Facturacion), model);
-        }
+        var paid = decimal.TryParse(digits, NumberStyles.None, CultureInfo.InvariantCulture, out var monto) ? monto : 0m;
+        var (medioPago, detallePago) = MediosPago.DeCobro(dto.PayMethod);
+        var solicitud = new SolicitudCierreCuenta(room.Id, paid, medioPago, detallePago, UsuarioId);
 
-        // Copia para mostrar el resumen: al cerrar, la habitacion queda libre y en limpieza.
-        model.Selected = new RoomDto { Id = room.Id, Number = room.Number, Type = room.Type, GuestName = room.GuestName };
-        Data.CloseAccount(room.Id);
+        // Fachada: valida el pago contra el monto consolidado, cierra la cuenta (RN-07),
+        // finaliza la reserva y deja la habitacion en limpieza (RN-02). Todo o nada.
+        PrefacturaDto? cierre = null;
+        model.Error = Intentar(() => cierre = cuentas.CerrarCuenta(solicitud));
+        if (cierre is null) return View(nameof(Facturacion), model);
+
         model.Closed = true;
+        model.PrefacturaId = cierre.IdPrefactura;
         return View(nameof(Facturacion), model);
     }
 
+    private List<RoomDto> OccupiedRooms() =>
+        habitaciones.Listar()
+            .Select(h => h.AWeb())
+            .Where(r => r.Status == RoomStatus.Ocupada)
+            .ToList();
+
     private BillingPageDto BuildBilling(RoomDto? selected, bool generated)
     {
-        var consumptions = selected is null ? [] : Data.GetConsumptions().Where(c => c.RoomNumber == selected.Number).ToList();
+        // Cuenta consolidada de la estancia en curso: noches segun las fechas de la reserva,
+        // consumos de servicios adicionales y tours (RN-07).
+        var cuenta = selected is null ? null : cuentas.ConsultarPorHabitacion(selected.Id);
+        if (cuenta is null)
+        {
+            return new BillingPageDto { PaymentMethods = MediosPago.DeRecepcion };
+        }
+
         return new BillingPageDto
         {
             Selected = selected,
-            Consumptions = consumptions,
-            Nights = BillingNights,
-            RoomTotal = selected is null ? 0 : BillingNights * selected.Price,
-            ServicesTotal = consumptions.Sum(c => c.Amount),
-            Generated = generated && selected is not null,
-            PaymentMethods = MockData.PaymentMethods,
+            Consumptions = cuenta.Consumos.Select(c => c.AWeb()).ToList(),
+            Tours = cuenta.Tours.Select(t => t.AWeb()).ToList(),
+            Nights = cuenta.Noches,
+            RoomTotal = cuenta.ValorTotalAlojamiento,
+            ServicesTotal = cuenta.TotalServicios,
+            ToursTotal = cuenta.TotalTours,
+            Generated = generated,
+            PaymentMethods = MediosPago.DeRecepcion,
         };
     }
 }

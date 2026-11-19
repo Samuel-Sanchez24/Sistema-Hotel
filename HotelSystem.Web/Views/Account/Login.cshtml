@@ -12,6 +12,11 @@
         <p class="text-slate-500 text-sm">Sistema de Gestion Hotelera</p>
     </div>
 
+    @if (Model.Info is not null)
+    {
+        <div class="mb-5 bg-emerald-500/10 border border-emerald-500/25 rounded-xl px-4 py-3 text-emerald-400 text-sm">@Model.Info</div>
+    }
+
     @if (Model.SelectedRole is null)
     {
         <p class="text-slate-500 text-xs mb-5">Seleccione su perfil para continuar <span class="text-slate-700">(HU-02)</span></p>
@@ -79,4 +84,12 @@
         </div>
     }
     <p class="mt-10 text-slate-700 text-xs">Front del sistema hotelero</p>
+    @if (Model.CanResetData)
+    {
+        @* Solo en desarrollo: borra la base de datos y vuelve a cargar los datos de demostracion. *@
+        <form asp-action="ReiniciarDatos" method="post" class="mt-2">
+            <button type="submit" class="text-slate-600 hover:text-slate-400 text-xs transition-colors"
+                    onclick="return confirm('Se borraran todos los datos y se cargaran de nuevo los de demostracion. ¿Continuar?');">Reiniciar datos de demostracion</button>
+        </form>
+    }
 </div>

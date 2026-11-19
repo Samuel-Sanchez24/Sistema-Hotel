@@ -62,4 +62,25 @@
     input.addEventListener('change', render);
     render();
   });
+
+  // Paneles en vivo (HU-05, HU-11). El panel del servidor es un observador de las habitaciones
+  // y aumenta su numero de version con cada cambio de estado. Aqui se consulta esa version
+  // cada 3 segundos y, si cambio, se recarga la pagina para mostrar los datos nuevos.
+  var live = document.querySelector('[data-live-url]');
+  if (live && window.fetch) {
+    var liveUrl = live.getAttribute('data-live-url');
+    var known = live.getAttribute('data-live-version');
+    setInterval(function () {
+      // No se interrumpe a quien tiene un formulario abierto en un modal.
+      if (document.querySelector('[data-modal]')) return;
+      fetch(liveUrl, { credentials: 'same-origin', cache: 'no-store' })
+        .then(function (r) { return r.ok ? r.text() : null; })
+        .then(function (version) {
+          if (version === null) return;
+          if (known === null) { known = version; return; }
+          if (version !== known) window.location.reload();
+        })
+        .catch(function () { /* sin conexion: se intenta de nuevo en el siguiente ciclo */ });
+    }, 3000);
+  }
 })();

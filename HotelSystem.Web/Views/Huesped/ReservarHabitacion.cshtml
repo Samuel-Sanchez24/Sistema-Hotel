@@ -3,7 +3,7 @@
     ViewData["Title"] = "Reservar Habitacion";
     ViewData["Nav"] = "ReservarHabitacion";
     var f = Model.Form;
-    var cap = MockData.CapacityByType[f.Type];
+    var cap = Model.CapacityByType.GetValueOrDefault(f.Type, 2);
     var route = new Dictionary<string, string>
     {
         ["Type"] = f.Type.ToString(),
@@ -21,8 +21,16 @@
         <div class="w-16 h-16 rounded-full bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center mb-5 text-emerald-400">@Ui.Ic(Icons.Check, 28)</div>
         <div class="text-slate-100 font-semibold text-xl mb-2">Reserva confirmada</div>
         <div class="text-slate-500 text-sm mb-1">Hab. @booked.Number - @Ui.TypeLabel(booked.Type)</div>
-        <div class="text-slate-500 text-sm mb-6">@f.CheckIn a @f.CheckOut - @Model.Nights noches - @Ui.Money(Model.Total)</div>
-        <div class="bg-[#0e1a2e] border border-[#1a2d48] rounded-xl px-6 py-4 text-sm text-slate-400 mb-2">Confirmacion enviada a <span class="text-slate-200">@Model.GuestEmail</span> <span class="text-slate-600">(HU-04 Esc.1)</span></div>
+        <div class="text-slate-500 text-sm mb-1">@Model.CheckInLabel a @Model.CheckOutLabel - @Model.Nights noches - @Ui.Money(Model.Total)</div>
+        <div class="text-slate-700 text-xs mb-6">@Model.ReservationCode</div>
+        @if (Model.EmailSent)
+        {
+            <div class="bg-[#0e1a2e] border border-[#1a2d48] rounded-xl px-6 py-4 text-sm text-slate-400 mb-2">Confirmacion enviada a <span class="text-slate-200">@Model.GuestEmail</span> <span class="text-slate-600">(HU-04 Esc.1)</span></div>
+        }
+        else
+        {
+            <div class="bg-rose-500/10 border border-rose-500/20 rounded-xl px-4 py-3 text-sm text-rose-400 mb-2">La reserva quedo confirmada, pero no fue posible enviar el correo a @Model.GuestEmail. Consulte sus datos en Mis Reservas. (HU-04)</div>
+        }
         <a asp-action="ReservarHabitacion" class="mt-4 text-blue-400 text-sm hover:text-blue-300">Hacer otra reserva</a>
     </div>
     return;
@@ -61,14 +69,14 @@
                     {
                         <label class="cursor-pointer text-center py-3 rounded-xl border text-sm font-medium transition-all @(f.Type == t ? "border-amber-400/50 bg-amber-400/10 text-amber-400" : "border-[#1a2d48] text-slate-500 hover:text-slate-300 hover:border-[#253d60]")">
                             <input type="radio" name="Type" value="@t" checked="@(f.Type == t)" data-autosubmit class="hidden" />
-                            <div>@Ui.TypeLabel(t)</div><div class="text-xs opacity-70 mt-0.5">@Ui.Money(MockData.PriceByType[t])/noche</div>
+                            <div>@Ui.TypeLabel(t)</div><div class="text-xs opacity-70 mt-0.5">@Ui.Money(Model.PriceByType.GetValueOrDefault(t))/noche</div>
                         </label>
                     }
                 </div>
             </div>
             <div class="grid grid-cols-2 gap-3">
-                <div class="space-y-1.5"><label for="CheckIn" class="text-slate-400 text-xs font-medium">Check-in</label><input id="CheckIn" name="CheckIn" value="@f.CheckIn" class="w-full bg-[#0e1a2e] border border-[#1a2d48] rounded-xl px-4 py-3 text-slate-200 text-sm focus:outline-none focus:border-amber-400/50" /></div>
-                <div class="space-y-1.5"><label for="CheckOut" class="text-slate-400 text-xs font-medium">Check-out</label><input id="CheckOut" name="CheckOut" value="@f.CheckOut" class="w-full bg-[#0e1a2e] border border-[#1a2d48] rounded-xl px-4 py-3 text-slate-200 text-sm focus:outline-none focus:border-amber-400/50" /></div>
+                <div class="space-y-1.5"><label for="CheckIn" class="text-slate-400 text-xs font-medium">Check-in</label><input id="CheckIn" name="CheckIn" type="date" value="@f.CheckIn" min="@Model.MinDate" data-autosubmit style="color-scheme:dark" class="w-full bg-[#0e1a2e] border border-[#1a2d48] rounded-xl px-4 py-3 text-slate-200 text-sm focus:outline-none focus:border-amber-400/50" /></div>
+                <div class="space-y-1.5"><label for="CheckOut" class="text-slate-400 text-xs font-medium">Check-out</label><input id="CheckOut" name="CheckOut" type="date" value="@f.CheckOut" min="@Model.MinDate" data-autosubmit style="color-scheme:dark" class="w-full bg-[#0e1a2e] border border-[#1a2d48] rounded-xl px-4 py-3 text-slate-200 text-sm focus:outline-none focus:border-amber-400/50" /></div>
             </div>
             <div class="space-y-1.5">
                 <span class="text-slate-400 text-xs font-medium">Huespedes</span>
@@ -80,9 +88,14 @@
                 </div>
                 <p id="guests-warn" class="text-rose-400 text-xs @(f.Guests > cap ? "" : "hidden")">Excede la capacidad maxima del tipo (RN-11)</p>
             </div>
-            @if (Model.Available.Count == 0)
+            <p class="text-slate-600 text-xs">@Model.Nights noches - del @Model.CheckInLabel al @Model.CheckOutLabel</p>
+            @if (Model.DateError is not null)
             {
-                <div class="bg-rose-500/10 border border-rose-500/20 rounded-xl px-4 py-3 text-sm text-rose-400">Sin habitaciones disponibles de tipo @Ui.TypeLabel(f.Type). Pruebe otro tipo o fechas. (HU-03 Esc.2)</div>
+                <div class="bg-rose-500/10 border border-rose-500/20 rounded-xl px-4 py-3 text-sm text-rose-400">@Model.DateError</div>
+            }
+            else if (Model.Available.Count == 0)
+            {
+                <div class="bg-rose-500/10 border border-rose-500/20 rounded-xl px-4 py-3 text-sm text-rose-400">Sin habitaciones disponibles de tipo @Ui.TypeLabel(f.Type) para esas fechas. Pruebe otro tipo o fechas. (HU-03 Esc.2 - RN-01)</div>
             }
             else
             {
@@ -95,7 +108,7 @@
     {
         <div class="space-y-4">
             <div class="flex items-center justify-between">
-                <div class="text-slate-400 text-sm">@Model.Available.Count habitaciones - @Ui.TypeLabel(f.Type)</div>
+                <div class="text-slate-400 text-sm">@Model.Available.Count habitaciones - @Ui.TypeLabel(f.Type) - @Model.CheckInLabel a @Model.CheckOutLabel</div>
                 <a asp-action="ReservarHabitacion" asp-all-route-data="route" asp-route-paso="1" class="text-slate-600 text-sm hover:text-slate-400">Cambiar</a>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -124,7 +137,7 @@
             <a asp-action="ReservarHabitacion" asp-all-route-data="route" asp-route-paso="2" class="text-slate-600 hover:text-slate-400 text-sm flex items-center gap-1.5">@Ui.Ic(Icons.Back, 14) Volver</a>
             <div class="bg-[#0e1a2e] border border-[#1a2d48] rounded-2xl p-5 space-y-2.5">
                 <div class="text-slate-100 font-semibold mb-3">Resumen de reserva</div>
-                @foreach (var (k, v) in new[] { ("Habitacion", $"{room.Number} - {Ui.TypeLabel(room.Type)}"), ("Noches", Model.Nights.ToString()), ("Total", Ui.Money(Model.Total)) })
+                @foreach (var (k, v) in new[] { ("Habitacion", $"{room.Number} - {Ui.TypeLabel(room.Type)}"), ("Fechas", $"{Model.CheckInLabel} a {Model.CheckOutLabel}"), ("Noches", Model.Nights.ToString()), ("Total", Ui.Money(Model.Total)) })
                 {
                     var isTotal = k == "Total";
                     <div class="flex justify-between py-2 border-b border-[#162035] last:border-0">

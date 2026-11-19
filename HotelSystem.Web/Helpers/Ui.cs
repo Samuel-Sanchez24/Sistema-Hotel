@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Net;
+using HotelSystem.Application.Comun;
 using HotelSystem.Web.DTOs.Common;
 using Microsoft.AspNetCore.Html;
 
@@ -20,6 +21,24 @@ public static class Ui
     public static string Money(decimal n) => "$" + n.ToString("N0", Co);
 
     public static string Now() => DateTime.Now.ToString("HH:mm", Co);
+
+    /* ─── Fechas: el backend entrega fechas con tipo y aqui se pasan al texto del prototipo ─── */
+
+    /// <summary>9 Sep</summary>
+    public static string ShortDate(DateOnly date) => Formato.FechaCorta(date);
+
+    /// <summary>9 Sep 2026</summary>
+    public static string LongDate(DateOnly date) => Formato.FechaConAnio(date);
+
+    /// <summary>Sello de fecha y hora del prototipo: "9 Sep - 11:02".</summary>
+    public static string Stamp(DateTime moment) => $"{Formato.FechaCorta(DateOnly.FromDateTime(moment))} - {Formato.Hora(moment)}";
+
+    /// <summary>Valor de un campo de fecha HTML (AAAA-MM-DD).</summary>
+    public static string IsoDate(DateOnly date) => date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+
+    /// <summary>Lee el valor de un campo de fecha HTML. Nulo si viene vacio o no es una fecha.</summary>
+    public static DateOnly? ParseDate(string? iso) =>
+        DateOnly.TryParseExact(iso, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var date) ? date : null;
 
     public static string Initials(string name) =>
         string.Concat(name.Split(' ', StringSplitOptions.RemoveEmptyEntries).Take(2).Select(w => w[0]));
@@ -48,6 +67,7 @@ public static class Ui
     {
         ReservationStatus.Confirmada => "Confirmada",
         ReservationStatus.EnCurso => "En curso",
+        ReservationStatus.Finalizada => "Finalizada",
         _ => "Cancelada",
     };
 
@@ -55,6 +75,7 @@ public static class Ui
     {
         ReservationStatus.Confirmada => "bg-blue-500/10 text-blue-400 border-blue-500/20",
         ReservationStatus.EnCurso => "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+        ReservationStatus.Finalizada => "bg-slate-500/10 text-slate-400 border-slate-500/20",
         _ => "bg-slate-600/10 text-slate-500 border-slate-600/20",
     };
 

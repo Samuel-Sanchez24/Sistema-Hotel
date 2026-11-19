@@ -4,7 +4,7 @@
     ViewData["Nav"] = "Reportes";
     var f = Model.Filter;
     var tabs = new[] { ("ocupacion", "Ocupacion"), ("ingresos", "Ingresos"), ("servicios", "Servicios"), ("personal", "Personal") };
-    var route = new Dictionary<string, string> { ["DateFrom"] = f.DateFrom, ["DateTo"] = f.DateTo, ["NoData"] = f.NoData.ToString() };
+    var route = new Dictionary<string, string> { ["DateFrom"] = f.DateFrom, ["DateTo"] = f.DateTo };
 }
 <div class="p-6 space-y-5 h-full overflow-y-auto">
     <div>
@@ -17,27 +17,27 @@
         <input type="hidden" name="Tab" value="@f.Tab" />
         <div class="flex items-center gap-2 text-sm">
             <label for="DateFrom" class="text-slate-500 text-xs">Desde:</label>
-            <input id="DateFrom" name="DateFrom" value="@f.DateFrom" class="bg-[#0e1a2e] border border-[#1a2d48] rounded-lg px-3 py-1.5 text-slate-200 text-sm focus:outline-none focus:border-amber-400/50 w-28" />
+            <input id="DateFrom" name="DateFrom" type="date" value="@f.DateFrom" data-autosubmit style="color-scheme:dark;width:10.5rem" class="bg-[#0e1a2e] border border-[#1a2d48] rounded-lg px-3 py-1.5 text-slate-200 text-sm focus:outline-none focus:border-amber-400/50" />
         </div>
         <div class="flex items-center gap-2 text-sm">
             <label for="DateTo" class="text-slate-500 text-xs">Hasta:</label>
-            <input id="DateTo" name="DateTo" value="@f.DateTo" class="bg-[#0e1a2e] border border-[#1a2d48] rounded-lg px-3 py-1.5 text-slate-200 text-sm focus:outline-none focus:border-amber-400/50 w-28" />
+            <input id="DateTo" name="DateTo" type="date" value="@f.DateTo" data-autosubmit style="color-scheme:dark;width:10.5rem" class="bg-[#0e1a2e] border border-[#1a2d48] rounded-lg px-3 py-1.5 text-slate-200 text-sm focus:outline-none focus:border-amber-400/50" />
         </div>
-        <label class="flex items-center gap-2 text-xs text-slate-500 cursor-pointer">
-            <input type="checkbox" name="NoData" value="true" checked="@f.NoData" data-autosubmit class="accent-amber-400" />
-            Simular sin datos <span class="text-slate-700">(Esc.2)</span>
-        </label>
         <button type="submit" class="hidden">Filtrar</button>
     </form>
     <form asp-action="Exportar" method="post" class="flex gap-2 ml-auto">
         <input type="hidden" name="Tab" value="@f.Tab" />
         <input type="hidden" name="DateFrom" value="@f.DateFrom" />
         <input type="hidden" name="DateTo" value="@f.DateTo" />
-        <input type="hidden" name="NoData" value="@f.NoData.ToString().ToLowerInvariant()" />
         <button type="submit" name="Format" value="PDF" class="flex items-center gap-1.5 px-3 py-1.5 text-xs border border-rose-500/20 text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors">@Ui.Ic(Icons.File, 13)PDF</button>
         <button type="submit" name="Format" value="Excel" class="flex items-center gap-1.5 px-3 py-1.5 text-xs border border-emerald-500/20 text-emerald-400 hover:bg-emerald-500/10 rounded-lg transition-colors">@Ui.Ic(Icons.Table, 13)Excel</button>
     </form>
     </div>
+
+    @if (Model.Error is not null)
+    {
+        <div class="max-w-lg bg-rose-500/10 border border-rose-500/20 rounded-xl px-4 py-3 text-sm text-rose-400">@Model.Error</div>
+    }
 
     <div class="flex gap-1 bg-[#080f1c] p-1 rounded-xl w-fit">
         @foreach (var (value, label) in tabs)
@@ -47,12 +47,15 @@
         }
     </div>
 
-    @if (f.NoData)
+    @if (Model.Error is not null)
+    {
+    }
+    else if (f.NoData)
     {
         <div class="py-16 text-center max-w-lg">
             <div class="text-slate-600 text-3xl mb-3">-</div>
             <div class="text-slate-400 font-medium">Sin datos para el periodo seleccionado</div>
-            <div class="text-slate-600 text-sm mt-1">No hay registros entre @f.DateFrom y @f.DateTo. <span class="text-slate-700">(HU-13 Esc.2)</span></div>
+            <div class="text-slate-600 text-sm mt-1">No hay registros en el periodo @Model.PeriodLabel. <span class="text-slate-700">(HU-13 Esc.2)</span></div>
         </div>
     }
     else if (f.Tab == "ingresos")
@@ -128,9 +131,9 @@
             <div class="grid grid-cols-3 gap-3">
                 @foreach (var (label, value, color) in new[]
                 {
-                    ("Tasa ocupacion", $"{Model.OccupancyRate}%", "text-blue-400"),
-                    ("Hab. ocupadas", $"{Model.OccupiedCount}/{Model.TotalRooms}", "text-rose-400"),
-                    ("Disponibles", Model.AvailableCount.ToString(), "text-emerald-400"),
+                    ("Ocupacion del periodo", $"{Model.OccupancyRate}%", "text-blue-400"),
+                    ("Ocupadas hoy", $"{Model.OccupiedNow}/{Model.TotalRooms}", "text-rose-400"),
+                    ("Disponibles hoy", Model.AvailableNow.ToString(), "text-emerald-400"),
                 })
                 {
                     <div class="bg-[#0e1a2e] border border-[#1a2d48] rounded-xl p-4 text-center">
@@ -140,7 +143,7 @@
                 }
             </div>
             <div class="bg-[#0e1a2e] border border-[#1a2d48] rounded-2xl p-5">
-                <div class="text-slate-400 text-sm font-medium mb-4">Ocupacion por tipo</div>
+                <div class="text-slate-400 text-sm font-medium mb-4">Ocupacion por tipo <span class="text-slate-700 text-xs">noches-habitacion del periodo: @Model.OccupiedNights de @Model.AvailableNights</span></div>
                 @foreach (var d in Model.Occupancy)
                 {
                     <div class="mb-4">

@@ -1,4 +1,5 @@
 @model CheckInOutPageDto
+@inject HotelSystem.Application.Abstracciones.IReloj Reloj
 @{
     ViewData["Title"] = "Check-in / Check-out";
     ViewData["Nav"] = "CheckInOut";
@@ -6,7 +7,7 @@
 <div class="p-6 space-y-6 h-full overflow-y-auto">
     <div>
         <h1 class="text-slate-100 font-semibold text-xl">Check-in / Check-out</h1>
-        <p class="text-slate-500 text-sm mt-0.5">Operaciones del dia - 9 Sep 2026 <span class="text-slate-700">(HU-06)</span></p>
+        <p class="text-slate-500 text-sm mt-0.5">Operaciones del dia - @Ui.LongDate(Reloj.Hoy) <span class="text-slate-700">(HU-06)</span></p>
     </div>
 
     <div class="flex gap-1 bg-[#080f1c] p-1 rounded-xl w-fit">
