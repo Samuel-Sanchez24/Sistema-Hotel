@@ -6,7 +6,7 @@ public enum RoomStatus { Disponible, Ocupada, EnLimpieza, Mantenimiento }
 
 public enum RoomType { Simple, Doble, Suite }
 
-public enum ReservationStatus { Confirmada, EnCurso, Cancelada }
+public enum ReservationStatus { Confirmada, EnCurso, Cancelada, Finalizada }
 
 public enum ReservationKind { Habitacion, Tour }
 

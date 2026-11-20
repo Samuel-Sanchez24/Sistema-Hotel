@@ -6,4 +6,18 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\HotelSystem.Application\HotelSystem.Application.csproj" />
+    <ProjectReference Include="..\HotelSystem.Infrastructure\HotelSystem.Infrastructure.csproj" />
+    <ProjectReference Include="..\HotelSystem.Persistence\HotelSystem.Persistence.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Archivos del prototipo en memoria, reemplazados por las capas Application y Persistence.
+         Ya no existen; se excluyen por si quedan en disco al copiar esta version sobre una anterior. -->
+    <Compile Remove="Services\IHotelDataService.cs" />
+    <Compile Remove="Services\InMemoryHotelDataService.cs" />
+    <Compile Remove="Services\MockData.cs" />
+  </ItemGroup>
+
 </Project>

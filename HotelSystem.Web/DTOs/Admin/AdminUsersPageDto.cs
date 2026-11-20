@@ -11,4 +11,10 @@ public class AdminUsersPageDto
     public CreateStaffUserDto Form { get; set; } = new();
     public string? FormError { get; set; }
     public IReadOnlyList<Role> AssignableRoles { get; set; } = [];
+
+    /// <summary>
+    /// Usuario y contrasena temporal de la cuenta recien creada. Se muestra una sola vez,
+    /// porque el sistema solo guarda el hash de la contrasena.
+    /// </summary>
+    public string? CreatedInfo { get; set; }
 }

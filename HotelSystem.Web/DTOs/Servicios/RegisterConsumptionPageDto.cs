@@ -11,5 +11,8 @@ public class RegisterConsumptionPageDto
     public string? RoomNumber { get; set; }
     public string? Service { get; set; }
     public string? Amount { get; set; }
+
+    /// <summary>Fecha del consumo (AAAA-MM-DD). Por defecto, hoy.</summary>
+    public string Date { get; set; } = "";
     public string? Error { get; set; }
 }
