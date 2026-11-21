@@ -480,3 +480,10 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+# Hotel Fast and Furious: datos locales generados al ejecutar (correos de prueba, bases SQLite, logs de verificacion)
+App_Data/
+*.db
+*.db-shm
+*.db-wal
+verificacion.log
