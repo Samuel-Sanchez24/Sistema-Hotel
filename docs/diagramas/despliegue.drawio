@@ -1,0 +1,327 @@
+<mxfile host="app.diagrams.net">
+  <diagram id="despliegue" name="Diagrama de despliegue">
+    <mxGraphModel dx="2155" dy="1157" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2480" pageHeight="1630" background="#FFFFFF" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="n2" parent="1" style="text;html=1;align=left;verticalAlign=top;fontColor=#1E2050;" value="&lt;b style=&#39;font-size:22px&#39;&gt;Diagrama de despliegue UML — Sistema de Gestión Hotelera · Hotel Fast and Furious&lt;/b&gt;&lt;br&gt;&lt;span style=&#39;font-size:13px&#39;&gt;Despliegue en servidor propio del hotel (on‑premise) · Corresponde a los contenedores del C4 Nivel 2 · Arquitectura en tres capas (presentación, negocio, datos)&lt;/span&gt;" vertex="1">
+          <mxGeometry height="60" width="1800" x="40" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="n3" parent="1" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 6;fillColor=none;strokeColor=#9AA0C8;strokeWidth=1.5;verticalAlign=top;align=left;spacingLeft=14;spacingTop=8;fontColor=#3B3F8F;fontSize=13;fontStyle=1;container=0;" value="Internet" vertex="1">
+          <mxGeometry height="1110" width="320" x="20" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="n4" parent="1" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 6;fillColor=none;strokeColor=#2BA3A0;strokeWidth=1.5;verticalAlign=top;align=left;spacingLeft=14;spacingTop=8;fontColor=#0F4C4A;fontSize=13;fontStyle=1;container=0;" value="Red interna del hotel (on‑premise)" vertex="1">
+          <mxGeometry height="1110" width="1730" x="360" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="n5" parent="1" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 6;fillColor=none;strokeColor=#9AA0C8;strokeWidth=1.5;verticalAlign=top;align=left;spacingLeft=14;spacingTop=8;fontColor=#3B3F8F;fontSize=13;fontStyle=1;container=0;" value="Servicios externos (Internet)" vertex="1">
+          <mxGeometry height="1110" width="340" x="2110" y="110" as="geometry" />
+        </mxCell>
+        <mxCell id="n6" parent="1" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;size=14;direction=south;verticalAlign=top;align=center;fillColor=#EEF0FB;strokeColor=#3B3F8F;fontColor=#1E2050;container=1;collapsible=0;fontSize=12;spacingTop=2;" value="«device»&lt;br&gt;&lt;b style=&#39;font-size:13px&#39;&gt;PC / Smartphone&lt;br&gt;del huésped&lt;/b&gt;" vertex="1">
+          <mxGeometry height="250" width="280" x="40" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="n7" parent="n6" style="shape=mxgraph.networks.laptop;html=1;verticalLabelPosition=bottom;aspect=fixed;strokeColor=#3B3F8F;fillColor=#FFFFFF;sketch=0;" value="" vertex="1">
+          <mxGeometry height="30" width="34" x="12" y="22" as="geometry" />
+        </mxCell>
+        <mxCell id="n8" parent="n6" style="rounded=1;arcSize=5;whiteSpace=wrap;html=1;verticalAlign=top;align=center;fillColor=#DDF6F4;strokeColor=#2BA3A0;strokeWidth=1.5;fontColor=#0F4C4A;container=1;collapsible=0;fontSize=11;" value="«executionEnvironment»&lt;br&gt;&lt;b&gt;Navegador web&lt;/b&gt;&lt;br&gt;&lt;span style=&#39;font-size:10px&#39;&gt;Chrome · Edge · Safari&lt;/span&gt;" vertex="1">
+          <mxGeometry height="164" width="238" x="14" y="72" as="geometry" />
+        </mxCell>
+        <mxCell id="n9" parent="n8" style="shape=note;size=11;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5B5FC7;fontColor=#1E2050;fontSize=11;" value="«artifact»&lt;br&gt;&lt;b&gt;Interfaz Portal del Huésped&lt;/b&gt;&lt;br&gt;&lt;span style=&#39;font-size:9px&#39;&gt;HTML · CSS · JS&lt;/span&gt;" vertex="1">
+          <mxGeometry height="90" width="208" x="14" y="54" as="geometry" />
+        </mxCell>
+        <mxCell id="n10" parent="1" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;size=14;direction=south;verticalAlign=top;align=center;fillColor=#EEF0FB;strokeColor=#3B3F8F;fontColor=#1E2050;container=1;collapsible=0;fontSize=12;spacingTop=2;" value="«device»&lt;br&gt;&lt;b style=&#39;font-size:13px&#39;&gt;Tablet / Smartphone&lt;br&gt;del personal&lt;/b&gt;" vertex="1">
+          <mxGeometry height="240" width="255" x="385" y="500" as="geometry" />
+        </mxCell>
+        <mxCell id="n11" parent="n10" style="shape=mxgraph.networks.tablet;html=1;verticalLabelPosition=bottom;aspect=fixed;strokeColor=#3B3F8F;fillColor=#FFFFFF;sketch=0;" value="" vertex="1">
+          <mxGeometry height="30" width="34" x="12" y="22" as="geometry" />
+        </mxCell>
+        <mxCell id="n12" parent="n10" style="rounded=1;arcSize=5;whiteSpace=wrap;html=1;verticalAlign=top;align=center;fillColor=#DDF6F4;strokeColor=#2BA3A0;strokeWidth=1.5;fontColor=#0F4C4A;container=1;collapsible=0;fontSize=11;" value="«executionEnvironment»&lt;br&gt;&lt;b&gt;Navegador web móvil&lt;/b&gt;&lt;br&gt;&lt;span style=&#39;font-size:10px&#39;&gt;Chrome · Safari&lt;/span&gt;" vertex="1">
+          <mxGeometry height="154" width="213" x="14" y="72" as="geometry" />
+        </mxCell>
+        <mxCell id="n13" parent="n12" style="shape=note;size=11;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5B5FC7;fontColor=#1E2050;fontSize=11;" value="«artifact»&lt;br&gt;&lt;b&gt;Interfaz Panel Interno&lt;/b&gt;&lt;br&gt;&lt;span style=&#39;font-size:9px&#39;&gt;HTML · CSS · JS (responsive)&lt;/span&gt;" vertex="1">
+          <mxGeometry height="80" width="183" x="14" y="54" as="geometry" />
+        </mxCell>
+        <mxCell id="n14" parent="1" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;size=14;direction=south;verticalAlign=top;align=center;fillColor=#EEF0FB;strokeColor=#3B3F8F;fontColor=#1E2050;container=1;collapsible=0;fontSize=12;spacingTop=2;" value="«device»&lt;br&gt;&lt;b style=&#39;font-size:13px&#39;&gt;PC de recepción /&lt;br&gt;administración&lt;/b&gt;" vertex="1">
+          <mxGeometry height="240" width="255" x="385" y="800" as="geometry" />
+        </mxCell>
+        <mxCell id="n15" parent="n14" style="shape=mxgraph.networks.pc;html=1;verticalLabelPosition=bottom;aspect=fixed;strokeColor=#3B3F8F;fillColor=#FFFFFF;sketch=0;" value="" vertex="1">
+          <mxGeometry height="30" width="34" x="12" y="22" as="geometry" />
+        </mxCell>
+        <mxCell id="n16" parent="n14" style="rounded=1;arcSize=5;whiteSpace=wrap;html=1;verticalAlign=top;align=center;fillColor=#DDF6F4;strokeColor=#2BA3A0;strokeWidth=1.5;fontColor=#0F4C4A;container=1;collapsible=0;fontSize=11;" value="«executionEnvironment»&lt;br&gt;&lt;b&gt;Navegador web&lt;/b&gt;&lt;br&gt;&lt;span style=&#39;font-size:10px&#39;&gt;Chrome · Edge&lt;/span&gt;" vertex="1">
+          <mxGeometry height="154" width="213" x="14" y="72" as="geometry" />
+        </mxCell>
+        <mxCell id="n17" parent="n16" style="shape=note;size=11;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5B5FC7;fontColor=#1E2050;fontSize=11;" value="«artifact»&lt;br&gt;&lt;b&gt;Interfaz Panel Interno&lt;/b&gt;&lt;br&gt;&lt;span style=&#39;font-size:9px&#39;&gt;HTML · CSS · JS&lt;/span&gt;" vertex="1">
+          <mxGeometry height="80" width="183" x="14" y="54" as="geometry" />
+        </mxCell>
+        <mxCell id="n18" parent="1" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;size=14;direction=south;verticalAlign=top;align=center;fillColor=#EEF0FB;strokeColor=#3B3F8F;fontColor=#1E2050;container=1;collapsible=0;fontSize=12;spacingTop=2;" value="«device»&lt;br&gt;&lt;b style=&#39;font-size:13px&#39;&gt;Firewall / Router&lt;/b&gt;&lt;br&gt;&lt;span style=&#39;font-size:10px&#39;&gt;perímetro del hotel&lt;/span&gt;" vertex="1">
+          <mxGeometry height="140" width="230" x="400" y="290" as="geometry" />
+        </mxCell>
+        <mxCell id="n19" parent="n18" style="shape=mxgraph.networks.firewall;html=1;verticalLabelPosition=bottom;aspect=fixed;strokeColor=#3B3F8F;fillColor=#FFFFFF;sketch=0;" value="" vertex="1">
+          <mxGeometry height="46" width="40" x="92" y="72" as="geometry" />
+        </mxCell>
+        <mxCell id="n20" parent="1" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;size=14;direction=south;verticalAlign=top;align=center;fillColor=#EEF0FB;strokeColor=#3B3F8F;fontColor=#1E2050;container=1;collapsible=0;fontSize=12;spacingTop=2;" value="«device»&lt;br&gt;&lt;b style=&#39;font-size:13px&#39;&gt;Punto de acceso&lt;br&gt;Wi‑Fi / Switch&lt;/b&gt;&lt;br&gt;&lt;span style=&#39;font-size:10px&#39;&gt;red interna&lt;/span&gt;" vertex="1">
+          <mxGeometry height="150" width="175" x="725" y="545" as="geometry" />
+        </mxCell>
+        <mxCell id="n21" parent="n20" style="shape=mxgraph.networks.wireless_hub;html=1;verticalLabelPosition=bottom;aspect=fixed;strokeColor=#3B3F8F;fillColor=#FFFFFF;sketch=0;" value="" vertex="1">
+          <mxGeometry height="40" width="46" x="60" y="92" as="geometry" />
+        </mxCell>
+        <mxCell id="n22" parent="1" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;size=14;direction=south;verticalAlign=top;align=center;fillColor=#EEF0FB;strokeColor=#3B3F8F;fontColor=#1E2050;container=1;collapsible=0;fontSize=12;spacingTop=2;" value="«device»&lt;br&gt;&lt;b style=&#39;font-size:13px&#39;&gt;Servidor Web&lt;/b&gt;&lt;br&gt;&lt;span style=&#39;font-size:10px&#39;&gt;Windows Server 2022&lt;/span&gt;" vertex="1">
+          <mxGeometry height="440" width="420" x="980" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="n23" parent="n22" style="shape=mxgraph.networks.web_server;html=1;verticalLabelPosition=bottom;aspect=fixed;strokeColor=#3B3F8F;fillColor=#FFFFFF;sketch=0;" value="" vertex="1">
+          <mxGeometry height="36" width="36" x="12" y="18" as="geometry" />
+        </mxCell>
+        <mxCell id="n24" parent="n22" style="rounded=1;arcSize=5;whiteSpace=wrap;html=1;verticalAlign=top;align=center;fillColor=#DDF6F4;strokeColor=#2BA3A0;strokeWidth=1.5;fontColor=#0F4C4A;container=1;collapsible=0;fontSize=11;" value="«executionEnvironment»&lt;br&gt;&lt;b&gt;IIS 10&lt;/b&gt;&lt;br&gt;&lt;span style=&#39;font-size:10px&#39;&gt;sitio HTTPS&lt;/span&gt;" vertex="1">
+          <mxGeometry height="352" width="374" x="16" y="72" as="geometry" />
+        </mxCell>
+        <mxCell id="n25" parent="n24" style="rounded=1;arcSize=5;whiteSpace=wrap;html=1;verticalAlign=top;align=center;fillColor=#C8EFEC;strokeColor=#2BA3A0;strokeWidth=1.5;fontColor=#0F4C4A;container=1;collapsible=0;fontSize=11;" value="«executionEnvironment»&lt;br&gt;&lt;b&gt;ASP.NET Core Runtime 10&lt;/b&gt;&lt;br&gt;&lt;span style=&#39;font-size:10px&#39;&gt;.NET 10&lt;/span&gt;" vertex="1">
+          <mxGeometry height="286" width="346" x="14" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="n26" parent="n25" style="shape=note;size=11;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5B5FC7;fontColor=#1E2050;fontSize=11;" value="«artifact»&lt;br&gt;&lt;b&gt;HotelSystem.Web.dll&lt;/b&gt;&lt;br&gt;&lt;span style=&#x27;font-size:9px&#x27;&gt;contenedores C4: Portal del Huésped y Panel Interno&lt;/span&gt;" vertex="1">
+          <mxGeometry height="58" width="152" x="14" y="54" as="geometry" />
+        </mxCell>
+        <mxCell id="n27" parent="n25" style="shape=note;size=11;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5B5FC7;fontColor=#1E2050;fontSize=11;" value="«artifact»&lt;br&gt;&lt;b&gt;HotelSystem.*.dll&lt;/b&gt;&lt;br&gt;&lt;span style=&#x27;font-size:9px&#x27;&gt;Application, Domain, Persistence e Infrastructure&lt;/span&gt;" vertex="1">
+          <mxGeometry height="58" width="152" x="180" y="54" as="geometry" />
+        </mxCell>
+        <mxCell id="n28" parent="n25" style="shape=note;size=11;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5B5FC7;fontColor=#1E2050;fontSize=11;" value="«artifact»&lt;br&gt;&lt;b&gt;wwwroot/&lt;/b&gt;&lt;br&gt;&lt;span style=&#39;font-size:9px&#39;&gt;vistas, CSS, JS&lt;/span&gt;" vertex="1">
+          <mxGeometry height="50" width="152" x="14" y="124" as="geometry" />
+        </mxCell>
+        <mxCell id="n29" parent="n25" style="shape=note;size=11;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5B5FC7;fontColor=#1E2050;fontSize=11;" value="«artifact»&lt;br&gt;&lt;b&gt;appsettings.Production.json&lt;/b&gt;&lt;br&gt;&lt;span style=&#39;font-size:9px&#39;&gt;configuración&lt;/span&gt;" vertex="1">
+          <mxGeometry height="50" width="152" x="180" y="124" as="geometry" />
+        </mxCell>
+        <mxCell id="n30" parent="n25" style="shape=note;size=11;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5B5FC7;fontColor=#1E2050;fontSize=11;" value="«artifact»&lt;br&gt;&lt;b&gt;certificado-tls.pfx&lt;/b&gt;&lt;br&gt;&lt;span style=&#39;font-size:9px&#39;&gt;certificado HTTPS&lt;/span&gt;" vertex="1">
+          <mxGeometry height="50" width="152" x="14" y="186" as="geometry" />
+        </mxCell>
+        <mxCell id="n31" parent="n25" style="shape=note;size=11;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5B5FC7;fontColor=#1E2050;fontSize=11;" value="«artifact»&lt;br&gt;&lt;b&gt;HotelSystem.Web.deps.json&lt;/b&gt;&lt;br&gt;&lt;span style=&#39;font-size:9px&#39;&gt;dependencias NuGet&lt;/span&gt;" vertex="1">
+          <mxGeometry height="50" width="152" x="180" y="186" as="geometry" />
+        </mxCell>
+        <mxCell id="n32" parent="1" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;size=14;direction=south;verticalAlign=top;align=center;fillColor=#EEF0FB;strokeColor=#3B3F8F;fontColor=#1E2050;container=1;collapsible=0;fontSize=12;spacingTop=2;" value="«device»&lt;br&gt;&lt;b style=&#39;font-size:13px&#39;&gt;Servidor de Aplicaciones&lt;/b&gt;&lt;br&gt;&lt;span style=&#39;font-size:10px&#39;&gt;Windows Server 2022&lt;/span&gt;" vertex="1">
+          <mxGeometry height="440" width="440" x="1520" y="270" as="geometry" />
+        </mxCell>
+        <mxCell id="n33" parent="n32" style="shape=mxgraph.networks.server;html=1;verticalLabelPosition=bottom;aspect=fixed;strokeColor=#3B3F8F;fillColor=#FFFFFF;sketch=0;" value="" vertex="1">
+          <mxGeometry height="40" width="28" x="14" y="18" as="geometry" />
+        </mxCell>
+        <mxCell id="n34" parent="n32" style="rounded=1;arcSize=5;whiteSpace=wrap;html=1;verticalAlign=top;align=center;fillColor=#DDF6F4;strokeColor=#2BA3A0;strokeWidth=1.5;fontColor=#0F4C4A;container=1;collapsible=0;fontSize=11;" value="«executionEnvironment»&lt;br&gt;&lt;b&gt;IIS 10&lt;/b&gt;&lt;br&gt;&lt;span style=&#39;font-size:10px&#39;&gt;sitio HTTPS&lt;/span&gt;" vertex="1">
+          <mxGeometry height="352" width="394" x="16" y="72" as="geometry" />
+        </mxCell>
+        <mxCell id="n35" parent="n34" style="rounded=1;arcSize=5;whiteSpace=wrap;html=1;verticalAlign=top;align=center;fillColor=#C8EFEC;strokeColor=#2BA3A0;strokeWidth=1.5;fontColor=#0F4C4A;container=1;collapsible=0;fontSize=11;" value="«executionEnvironment»&lt;br&gt;&lt;b&gt;ASP.NET Core Runtime 10&lt;/b&gt;&lt;br&gt;&lt;span style=&#39;font-size:10px&#39;&gt;.NET 10 · API REST&lt;/span&gt;" vertex="1">
+          <mxGeometry height="286" width="366" x="14" y="50" as="geometry" />
+        </mxCell>
+        <mxCell id="n36" parent="n35" style="shape=note;size=11;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5B5FC7;fontColor=#1E2050;fontSize=11;" value="«artifact»&lt;br&gt;&lt;b&gt;HotelSystem.API.dll&lt;/b&gt;&lt;br&gt;&lt;span style=&#39;font-size:9px&#39;&gt;contenedor C4: API / Backend&lt;/span&gt;" vertex="1">
+          <mxGeometry height="58" width="162" x="14" y="54" as="geometry" />
+        </mxCell>
+        <mxCell id="n37" parent="n35" style="shape=note;size=11;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5B5FC7;fontColor=#1E2050;fontSize=11;" value="«artifact»&lt;br&gt;&lt;b&gt;HotelSystem.Application.dll&lt;/b&gt;&lt;br&gt;&lt;span style=&#39;font-size:9px&#39;&gt;reglas de negocio RN‑01 a RN‑11&lt;/span&gt;" vertex="1">
+          <mxGeometry height="58" width="162" x="190" y="54" as="geometry" />
+        </mxCell>
+        <mxCell id="n38" parent="n35" style="shape=note;size=11;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5B5FC7;fontColor=#1E2050;fontSize=11;" value="«artifact»&lt;br&gt;&lt;b&gt;HotelSystem.Domain.dll&lt;/b&gt;&lt;br&gt;&lt;span style=&#39;font-size:9px&#39;&gt;entidades y estados&lt;/span&gt;" vertex="1">
+          <mxGeometry height="50" width="162" x="14" y="124" as="geometry" />
+        </mxCell>
+        <mxCell id="n39" parent="n35" style="shape=note;size=11;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5B5FC7;fontColor=#1E2050;fontSize=11;" value="«artifact»&lt;br&gt;&lt;b&gt;HotelSystem.Persistence.dll&lt;/b&gt;&lt;br&gt;&lt;span style=&#39;font-size:9px&#39;&gt;EF Core · repositorios&lt;/span&gt;" vertex="1">
+          <mxGeometry height="50" width="162" x="190" y="124" as="geometry" />
+        </mxCell>
+        <mxCell id="n40" parent="n35" style="shape=note;size=11;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5B5FC7;fontColor=#1E2050;fontSize=11;" value="«artifact»&lt;br&gt;&lt;b&gt;HotelSystem.Infrastructure.dll&lt;/b&gt;&lt;br&gt;&lt;span style=&#39;font-size:9px&#39;&gt;correo · PDF · Excel&lt;/span&gt;" vertex="1">
+          <mxGeometry height="50" width="162" x="14" y="186" as="geometry" />
+        </mxCell>
+        <mxCell id="n41" parent="n35" style="shape=note;size=11;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5B5FC7;fontColor=#1E2050;fontSize=11;" value="«artifact»&lt;br&gt;&lt;b&gt;appsettings.Production.json&lt;/b&gt;&lt;br&gt;&lt;span style=&#39;font-size:9px&#39;&gt;cadena BD · JWT · SMTP&lt;/span&gt;" vertex="1">
+          <mxGeometry height="50" width="162" x="190" y="186" as="geometry" />
+        </mxCell>
+        <mxCell id="n42" parent="1" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;size=14;direction=south;verticalAlign=top;align=center;fillColor=#EEF0FB;strokeColor=#3B3F8F;fontColor=#1E2050;container=1;collapsible=0;fontSize=12;spacingTop=2;" value="«device»&lt;br&gt;&lt;b style=&#39;font-size:13px&#39;&gt;Servidor de Base de Datos&lt;/b&gt;&lt;br&gt;&lt;span style=&#39;font-size:10px&#39;&gt;Windows Server 2022&lt;/span&gt;" vertex="1">
+          <mxGeometry height="260" width="440" x="1520" y="820" as="geometry" />
+        </mxCell>
+        <mxCell id="n43" parent="n42" style="shape=mxgraph.networks.storage;html=1;verticalLabelPosition=bottom;aspect=fixed;strokeColor=#3B3F8F;fillColor=#FFFFFF;sketch=0;" value="" vertex="1">
+          <mxGeometry height="40" width="30" x="14" y="18" as="geometry" />
+        </mxCell>
+        <mxCell id="n44" parent="n42" style="rounded=1;arcSize=5;whiteSpace=wrap;html=1;verticalAlign=top;align=center;fillColor=#DDF6F4;strokeColor=#2BA3A0;strokeWidth=1.5;fontColor=#0F4C4A;container=1;collapsible=0;fontSize=11;" value="«executionEnvironment»&lt;br&gt;&lt;b&gt;SQL Server 2022&lt;/b&gt;&lt;br&gt;&lt;span style=&#39;font-size:10px&#39;&gt;motor de base de datos relacional&lt;/span&gt;" vertex="1">
+          <mxGeometry height="172" width="394" x="16" y="72" as="geometry" />
+        </mxCell>
+        <mxCell id="n45" parent="n44" style="shape=note;size=11;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5B5FC7;fontColor=#1E2050;fontSize=11;" value="«artifact»&lt;br&gt;&lt;b&gt;esquema (EF Core)&lt;/b&gt;&lt;br&gt;&lt;span style=&#39;font-size:9px&#39;&gt;tablas · índices · restricciones&lt;/span&gt;" vertex="1">
+          <mxGeometry height="48" width="176" x="14" y="56" as="geometry" />
+        </mxCell>
+        <mxCell id="n46" parent="n44" style="shape=note;size=11;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5B5FC7;fontColor=#1E2050;fontSize=11;" value="«artifact»&lt;br&gt;&lt;b&gt;respaldo.bak&lt;/b&gt;&lt;br&gt;&lt;span style=&#39;font-size:9px&#39;&gt;copia de seguridad diaria&lt;/span&gt;" vertex="1">
+          <mxGeometry height="48" width="176" x="204" y="56" as="geometry" />
+        </mxCell>
+        <mxCell id="n47" parent="n44" style="shape=note;size=11;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5B5FC7;fontColor=#1E2050;fontSize=11;" value="«artifact»&lt;br&gt;&lt;b&gt;HotelFastAndFurious.mdf&lt;/b&gt;&lt;br&gt;&lt;span style=&#39;font-size:9px&#39;&gt;reservas, habitaciones, usuarios, tours&lt;/span&gt;" vertex="1">
+          <mxGeometry height="50" width="176" x="14" y="114" as="geometry" />
+        </mxCell>
+        <mxCell id="n48" parent="n44" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=7;fillColor=#FFFFFF;strokeColor=#5B5FC7;" value="" vertex="1">
+          <mxGeometry height="48" width="36" x="274" y="114" as="geometry" />
+        </mxCell>
+        <mxCell id="n49" parent="1" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;size=14;direction=south;verticalAlign=top;align=center;fillColor=#EEF0FB;strokeColor=#3B3F8F;fontColor=#1E2050;container=1;collapsible=0;fontSize=12;spacingTop=2;" value="«device»&lt;br&gt;&lt;b style=&#39;font-size:13px&#39;&gt;Servidor SMTP&lt;/b&gt;&lt;br&gt;&lt;span style=&#39;font-size:10px&#39;&gt;proveedor de correo electrónico&lt;/span&gt;" vertex="1">
+          <mxGeometry height="150" width="280" x="2140" y="290" as="geometry" />
+        </mxCell>
+        <mxCell id="n50" parent="n49" style="shape=mxgraph.networks.mail_server;html=1;verticalLabelPosition=bottom;aspect=fixed;strokeColor=#3B3F8F;fillColor=#FFFFFF;sketch=0;" value="" vertex="1">
+          <mxGeometry height="52" width="40" x="112" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="n51" parent="1" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;size=14;direction=south;verticalAlign=top;align=center;fillColor=#EEF0FB;strokeColor=#3B3F8F;fontColor=#1E2050;container=1;collapsible=0;fontSize=12;spacingTop=2;dashed=1;dashPattern=6 4;fillColor=#F6F6F6;strokeColor=#7A7A7A;" value="«device»&lt;br&gt;&lt;b style=&#39;font-size:13px&#39;&gt;Pasarela de pagos&lt;/b&gt;&lt;br&gt;&lt;span style=&#39;font-size:10px&#39;&gt;[pendiente de definir]&lt;/span&gt;" vertex="1">
+          <mxGeometry height="150" width="280" x="2140" y="520" as="geometry" />
+        </mxCell>
+        <mxCell id="n52" parent="n51" style="shape=mxgraph.networks.secured;html=1;verticalLabelPosition=bottom;aspect=fixed;strokeColor=#7A7A7A;fillColor=#FFFFFF;sketch=0;" value="" vertex="1">
+          <mxGeometry height="48" width="36" x="118" y="82" as="geometry" />
+        </mxCell>
+        <mxCell id="n53" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#F1EAFE;strokeColor=#7A4FD6;fontColor=#2A1A5E;fontSize=11;container=1;collapsible=0;" value="«component»&lt;br&gt;&lt;b&gt;Portal del Huésped&lt;/b&gt;" vertex="1">
+          <mxGeometry height="52" width="180" x="975" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="n54" parent="n53" style="shape=module;jettyWidth=6;jettyHeight=3;html=1;fillColor=#FFFFFF;strokeColor=#7A4FD6;" value="" vertex="1">
+          <mxGeometry height="18" width="16" x="154" y="8" as="geometry" />
+        </mxCell>
+        <mxCell id="n55" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#F1EAFE;strokeColor=#7A4FD6;fontColor=#2A1A5E;fontSize=11;container=1;collapsible=0;" value="«component»&lt;br&gt;&lt;b&gt;Panel Interno&lt;/b&gt;" vertex="1">
+          <mxGeometry height="52" width="180" x="1180" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="n56" parent="n55" style="shape=module;jettyWidth=6;jettyHeight=3;html=1;fillColor=#FFFFFF;strokeColor=#7A4FD6;" value="" vertex="1">
+          <mxGeometry height="18" width="16" x="154" y="8" as="geometry" />
+        </mxCell>
+        <mxCell id="n57" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#F1EAFE;strokeColor=#7A4FD6;fontColor=#2A1A5E;fontSize=11;container=1;collapsible=0;" value="«component»&lt;br&gt;&lt;b&gt;API / Backend&lt;/b&gt;" vertex="1">
+          <mxGeometry height="52" width="180" x="1515" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="n58" parent="n57" style="shape=module;jettyWidth=6;jettyHeight=3;html=1;fillColor=#FFFFFF;strokeColor=#7A4FD6;" value="" vertex="1">
+          <mxGeometry height="18" width="16" x="154" y="8" as="geometry" />
+        </mxCell>
+        <mxCell id="n59" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#F1EAFE;strokeColor=#7A4FD6;fontColor=#2A1A5E;fontSize=11;container=1;collapsible=0;" value="«component»&lt;br&gt;&lt;b&gt;Base de datos&lt;/b&gt;" vertex="1">
+          <mxGeometry height="52" width="180" x="1550" y="1130" as="geometry" />
+        </mxCell>
+        <mxCell id="n60" parent="n59" style="shape=module;jettyWidth=6;jettyHeight=3;html=1;fillColor=#FFFFFF;strokeColor=#7A4FD6;" value="" vertex="1">
+          <mxGeometry height="18" width="16" x="154" y="8" as="geometry" />
+        </mxCell>
+        <mxCell id="n61" edge="1" parent="1" source="n26" style="endArrow=open;endFill=0;endSize=10;dashed=1;html=1;strokeColor=#7A4FD6;fontColor=#7A4FD6;fontSize=10;labelBackgroundColor=#FFFFFF;edgeStyle=orthogonalEdgeStyle;rounded=0;exitX=0.35;exitY=0;entryX=0.5;entryY=1;" target="n53" value="«manifest»">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n62" edge="1" parent="1" source="n26" style="endArrow=open;endFill=0;endSize=10;dashed=1;html=1;strokeColor=#7A4FD6;fontColor=#7A4FD6;fontSize=10;labelBackgroundColor=#FFFFFF;edgeStyle=orthogonalEdgeStyle;rounded=0;exitX=0.6;exitY=0;entryX=0.5;entryY=1;" target="n55" value="«manifest»">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n63" edge="1" parent="1" source="n36" style="endArrow=open;endFill=0;endSize=10;dashed=1;html=1;strokeColor=#7A4FD6;fontColor=#7A4FD6;fontSize=10;labelBackgroundColor=#FFFFFF;edgeStyle=orthogonalEdgeStyle;rounded=0;exitX=0.35;exitY=0;entryX=0.5;entryY=1;" target="n57" value="«manifest»">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n64" edge="1" parent="1" source="n47" style="endArrow=open;endFill=0;endSize=10;dashed=1;html=1;strokeColor=#7A4FD6;fontColor=#7A4FD6;fontSize=10;labelBackgroundColor=#FFFFFF;edgeStyle=orthogonalEdgeStyle;rounded=0;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="n59" value="«manifest»">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n65" edge="1" parent="1" source="n6" style="endArrow=oval;startArrow=oval;endFill=0;startFill=0;endSize=8;startSize=8;html=1;strokeColor=#1E2050;strokeWidth=1.5;edgeStyle=orthogonalEdgeStyle;rounded=0;fontSize=11;fontColor=#1E2050;labelBackgroundColor=#FFFFFF;exitX=0.24;exitY=0;entryX=0.5;entryY=1;" target="n18" value="HTTPS (443)&lt;br&gt;Internet">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n66" edge="1" parent="1" source="n18" style="endArrow=oval;startArrow=oval;endFill=0;startFill=0;endSize=8;startSize=8;html=1;strokeColor=#1E2050;strokeWidth=1.5;edgeStyle=orthogonalEdgeStyle;rounded=0;fontSize=11;fontColor=#1E2050;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=0;entryX=0.2;entryY=1;" target="n22" value="HTTPS (443)">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n67" edge="1" parent="1" source="n10" style="endArrow=oval;startArrow=oval;endFill=0;startFill=0;endSize=8;startSize=8;html=1;strokeColor=#1E2050;strokeWidth=1.5;edgeStyle=orthogonalEdgeStyle;rounded=0;fontSize=11;fontColor=#1E2050;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=0;entryX=0.5;entryY=1;" target="n20" value="HTTPS (443)&lt;br&gt;Wi‑Fi del hotel">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n68" edge="1" parent="1" source="n14" style="endArrow=oval;startArrow=oval;endFill=0;startFill=0;endSize=8;startSize=8;html=1;strokeColor=#1E2050;strokeWidth=1.5;edgeStyle=orthogonalEdgeStyle;rounded=0;fontSize=11;fontColor=#1E2050;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=0;entryX=1;entryY=0.5;" target="n20" value="HTTPS (443)&lt;br&gt;LAN">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n69" edge="1" parent="1" source="n20" style="endArrow=oval;startArrow=oval;endFill=0;startFill=0;endSize=8;startSize=8;html=1;strokeColor=#1E2050;strokeWidth=1.5;edgeStyle=orthogonalEdgeStyle;rounded=0;fontSize=11;fontColor=#1E2050;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=0;entryX=0.795;entryY=1;" target="n22" value="HTTPS (443)&lt;br&gt;red interna">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n70" edge="1" parent="1" source="n22" style="endArrow=oval;startArrow=oval;endFill=0;startFill=0;endSize=8;startSize=8;html=1;strokeColor=#1E2050;strokeWidth=1.5;edgeStyle=orthogonalEdgeStyle;rounded=0;fontSize=11;fontColor=#1E2050;labelBackgroundColor=#FFFFFF;exitX=1;exitY=0.9;entryX=0;entryY=0.3;" target="n42" value="TCP · SQL Server TDS (1433)&lt;br&gt;EF Core · HotelSystem.Web">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n70b" edge="1" parent="1" source="n18" target="n32" style="endArrow=oval;startArrow=oval;endFill=0;startFill=0;endSize=8;startSize=8;html=1;strokeColor=#1E2050;strokeWidth=1.5;edgeStyle=orthogonalEdgeStyle;rounded=0;fontSize=11;fontColor=#1E2050;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=0;entryX=0.5;entryY=0;" value="HTTPS (443) · REST / JSON · token JWT&lt;br&gt;(front HTML/JS y clientes externos)">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="515" y="235" /><mxPoint x="1740" y="235" /></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="n71" edge="1" parent="1" source="n32" style="endArrow=oval;startArrow=oval;endFill=0;startFill=0;endSize=8;startSize=8;html=1;strokeColor=#1E2050;strokeWidth=1.5;edgeStyle=orthogonalEdgeStyle;rounded=0;fontSize=11;fontColor=#1E2050;labelBackgroundColor=#FFFFFF;exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="n42" value="TCP · SQL Server TDS (1433)&lt;br&gt;EF Core · HotelSystem.API">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n72" edge="1" parent="1" source="n32" style="endArrow=oval;startArrow=oval;endFill=0;startFill=0;endSize=8;startSize=8;html=1;strokeColor=#1E2050;strokeWidth=1.5;edgeStyle=orthogonalEdgeStyle;rounded=0;fontSize=11;fontColor=#1E2050;labelBackgroundColor=#FFFFFF;exitX=0.216;exitY=0;entryX=0.5;entryY=1;" target="n49" value="SMTP + TLS (587)">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n73" edge="1" parent="1" source="n32" style="endArrow=oval;startArrow=oval;endFill=0;startFill=0;endSize=8;startSize=8;html=1;strokeColor=#1E2050;strokeWidth=1.5;edgeStyle=orthogonalEdgeStyle;rounded=0;fontSize=11;fontColor=#1E2050;labelBackgroundColor=#FFFFFF;dashed=1;strokeColor=#7A7A7A;exitX=0.74;exitY=0;entryX=0.5;entryY=1;" target="n51" value="HTTPS (443)&lt;br&gt;[pendiente]">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n74" parent="1" style="shape=note;size=16;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=10;spacingTop=4;fillColor=#FAFAFF;strokeColor=#5B5FC7;fontColor=#1E2050;fontSize=11;fontFamily=Courier New;" value="&lt;b&gt;«deployment spec»&lt;br&gt;web.config — Servidor Web&lt;/b&gt;&lt;br&gt;&lt;br&gt;SO = Windows Server 2022&lt;br&gt;Hosting = IIS 10 + Hosting Bundle .NET 10&lt;br&gt;Puerto = 443 HTTPS (TLS 1.2+)&lt;br&gt;&amp;nbsp;&amp;nbsp;80 → redirección a 443&lt;br&gt;ASPNETCORE_ENVIRONMENT = Production&lt;br&gt;Cadena de conexión = SQL Server srv-bd:1433&lt;br&gt;&amp;nbsp;&amp;nbsp;(misma base que la API)&lt;br&gt;Recursos = 4 vCPU · 8 GB RAM (supuesto)" vertex="1">
+          <mxGeometry height="200" width="420" x="980" y="760" as="geometry" />
+        </mxCell>
+        <mxCell id="n75" parent="1" style="shape=note;size=16;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=10;spacingTop=4;fillColor=#FAFAFF;strokeColor=#5B5FC7;fontColor=#1E2050;fontSize=11;fontFamily=Courier New;" value="&lt;b&gt;«deployment spec»&lt;br&gt;appsettings — API&lt;/b&gt;&lt;br&gt;&lt;br&gt;Puerto = 443 HTTPS&lt;br&gt;Autenticación = JWT Bearer&lt;br&gt;BaseDeDatos.Proveedor = SqlServer&lt;br&gt;Correo.Modo = Smtp (587)&lt;br&gt;Jwt.Clave = secreto fuera del código&lt;br&gt;Hotel.HoraCheckIn = 15:00&lt;br&gt;Recursos = 4 vCPU · 8 GB RAM&lt;br&gt;&amp;nbsp;&amp;nbsp;(supuesto)" vertex="1">
+          <mxGeometry height="220" width="290" x="2140" y="720" as="geometry" />
+        </mxCell>
+        <mxCell id="n76" parent="1" style="shape=note;size=16;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=10;spacingTop=4;fillColor=#FAFAFF;strokeColor=#5B5FC7;fontColor=#1E2050;fontSize=11;fontFamily=Courier New;" value="&lt;b&gt;«deployment spec»&lt;br&gt;Servidor de Base de Datos&lt;/b&gt;&lt;br&gt;&lt;br&gt;SGBD = SQL Server 2022&lt;br&gt;Puerto = 1433 (solo red interna)&lt;br&gt;Cifrado = TDE AES‑256&lt;br&gt;&amp;nbsp;&amp;nbsp;(propuesto)&lt;br&gt;Reservas = serializable&lt;br&gt;&amp;nbsp;&amp;nbsp;(implementado)&lt;br&gt;Respaldo = diario (propuesto)&lt;br&gt;Recursos = 4 vCPU · 16 GB RAM&lt;br&gt;&amp;nbsp;&amp;nbsp;(supuesto)" vertex="1">
+          <mxGeometry height="245" width="290" x="2140" y="960" as="geometry" />
+        </mxCell>
+        <mxCell id="n77" parent="1" style="shape=note;size=16;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=10;spacingTop=4;fillColor=#FAFAFF;strokeColor=#5B5FC7;fontColor=#1E2050;fontSize=11;fillColor=#FFF8E6;strokeColor=#D99A00;" value="&lt;b&gt;Nota — Web y API en el código&lt;/b&gt;&lt;br&gt;HotelSystem.Web (ASP.NET Core MVC) implementa el Portal del Huésped y el Panel Interno del C4 Nivel 2 y usa la capa de aplicación en el mismo proceso; por eso se conecta directamente a la base de datos. HotelSystem.API expone los mismos servicios por REST/JWT para clientes externos (front HTML/JS)." vertex="1">
+          <mxGeometry height="110" width="420" x="980" y="985" as="geometry" />
+        </mxCell>
+        <mxCell id="n78" edge="1" parent="1" source="n74" style="endArrow=none;dashed=1;html=1;strokeColor=#5B5FC7;startArrow=oval;startFill=0;startSize=6;exitX=0.5;exitY=0;entryX=1;entryY=0.5;" target="n22" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n79" edge="1" parent="1" source="n75" style="endArrow=none;dashed=1;html=1;strokeColor=#5B5FC7;startArrow=oval;startFill=0;startSize=6;exitX=0;exitY=0.3;entryX=1;entryY=0.03;" target="n32" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n80" edge="1" parent="1" source="n76" style="endArrow=none;dashed=1;html=1;strokeColor=#5B5FC7;startArrow=oval;startFill=0;startSize=6;exitX=0;exitY=0.4;entryX=0.8;entryY=0;" target="n42" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n81" parent="1" style="rounded=1;arcSize=2;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=12;fillColor=#FFFFFF;strokeColor=#B9BEE0;" value="&lt;div style=&#39;font-size:14px;font-weight:bold;color:#3B2A8F;margin-bottom:6px;&#39;&gt;Atributos de calidad (RNF) → decisión en el despliegue&lt;/div&gt;&lt;table style=&#39;width:1660px;border-collapse:collapse;font-size:12.5px;color:#1E2050;&#39;&gt;&lt;tr style=&#39;background:#3B3F8F;color:#FFFFFF;&#39;&gt;&lt;th style=&#39;padding:4px 8px;text-align:left;&#39;&gt;RNF&lt;/th&gt;&lt;th style=&#39;padding:4px 8px;text-align:left;&#39;&gt;Atributo&lt;/th&gt;&lt;th style=&#39;padding:4px 8px;text-align:left;&#39;&gt;Estado&lt;/th&gt;&lt;th style=&#39;padding:4px 8px;text-align:left;&#39;&gt;Decisión en el despliegue&lt;/th&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&#39;padding:5px 8px;border-bottom:1px solid #D5D8EE;&#39;&gt;&lt;b&gt;RNF‑01&lt;/b&gt;&lt;/td&gt;&lt;td style=&#39;padding:5px 8px;border-bottom:1px solid #D5D8EE;&#39;&gt;Rendimiento&lt;/td&gt;&lt;td style=&#39;padding:5px 8px;border-bottom:1px solid #D5D8EE;&#39;&gt;&lt;span style=&#39;color:#B45309;font-weight:bold;&#39;&gt;Propuesto&lt;/span&gt;&lt;/td&gt;&lt;td style=&#39;padding:5px 8px;border-bottom:1px solid #D5D8EE;&#39;&gt;La API corre en un servidor dedicado, separado de la web y de la BD; la comunicación interna va por la LAN del hotel (baja latencia).&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&#39;padding:5px 8px;border-bottom:1px solid #D5D8EE;&#39;&gt;&lt;b&gt;RNF‑02&lt;/b&gt;&lt;/td&gt;&lt;td style=&#39;padding:5px 8px;border-bottom:1px solid #D5D8EE;&#39;&gt;Seguridad&lt;/td&gt;&lt;td style=&#39;padding:5px 8px;border-bottom:1px solid #D5D8EE;&#39;&gt;&lt;span style=&#39;color:#5B3FC4;font-weight:bold;&#39;&gt;Mixto&lt;/span&gt;&lt;/td&gt;&lt;td style=&#39;padding:5px 8px;border-bottom:1px solid #D5D8EE;&#39;&gt;&lt;b&gt;Implementado:&lt;/b&gt; HTTPS (redirección en Web y API), JWT en la API, contraseñas con PBKDF2. &lt;b&gt;Propuesto:&lt;/b&gt; firewall perimetral, BD solo en red interna, cifrado TDE AES‑256.&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&#39;padding:5px 8px;border-bottom:1px solid #D5D8EE;&#39;&gt;&lt;b&gt;RNF‑03&lt;/b&gt;&lt;/td&gt;&lt;td style=&#39;padding:5px 8px;border-bottom:1px solid #D5D8EE;&#39;&gt;Disponibilidad&lt;/td&gt;&lt;td style=&#39;padding:5px 8px;border-bottom:1px solid #D5D8EE;&#39;&gt;&lt;span style=&#39;color:#B45309;font-weight:bold;&#39;&gt;Propuesto&lt;/span&gt;&lt;/td&gt;&lt;td style=&#39;padding:5px 8px;border-bottom:1px solid #D5D8EE;&#39;&gt;Respaldos diarios (respaldo.bak), servidores con UPS y ventanas de mantenimiento programadas fuera de horas pico.&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&#39;padding:5px 8px;border-bottom:1px solid #D5D8EE;&#39;&gt;&lt;b&gt;RNF‑04&lt;/b&gt;&lt;/td&gt;&lt;td style=&#39;padding:5px 8px;border-bottom:1px solid #D5D8EE;&#39;&gt;Usabilidad&lt;/td&gt;&lt;td style=&#39;padding:5px 8px;border-bottom:1px solid #D5D8EE;&#39;&gt;&lt;span style=&#39;color:#11795A;font-weight:bold;&#39;&gt;Implementado&lt;/span&gt;&lt;/td&gt;&lt;td style=&#39;padding:5px 8px;border-bottom:1px solid #D5D8EE;&#39;&gt;Reserva de habitación en 3 pasos (Preferencias → Elegir habitación → Confirmar), servida desde el Servidor Web; el huésped no instala nada.&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&#39;padding:5px 8px;border-bottom:1px solid #D5D8EE;&#39;&gt;&lt;b&gt;RNF‑05&lt;/b&gt;&lt;/td&gt;&lt;td style=&#39;padding:5px 8px;border-bottom:1px solid #D5D8EE;&#39;&gt;Compatibilidad&lt;/td&gt;&lt;td style=&#39;padding:5px 8px;border-bottom:1px solid #D5D8EE;&#39;&gt;&lt;span style=&#39;color:#11795A;font-weight:bold;&#39;&gt;Implementado&lt;/span&gt;&lt;/td&gt;&lt;td style=&#39;padding:5px 8px;border-bottom:1px solid #D5D8EE;&#39;&gt;Aplicación web: el nodo cliente solo necesita Chrome, Edge o Safari (dos últimas versiones estables).&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&#39;padding:5px 8px;border-bottom:1px solid #D5D8EE;&#39;&gt;&lt;b&gt;RNF‑06&lt;/b&gt;&lt;/td&gt;&lt;td style=&#39;padding:5px 8px;border-bottom:1px solid #D5D8EE;&#39;&gt;Escalabilidad&lt;/td&gt;&lt;td style=&#39;padding:5px 8px;border-bottom:1px solid #D5D8EE;&#39;&gt;&lt;span style=&#39;color:#B45309;font-weight:bold;&#39;&gt;Propuesto&lt;/span&gt;&lt;/td&gt;&lt;td style=&#39;padding:5px 8px;border-bottom:1px solid #D5D8EE;&#39;&gt;Capas en nodos separados: se pueden ampliar recursos o agregar otra instancia de la API sin tocar la BD (60 habitaciones, 20 tours/día).&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&#39;padding:5px 8px;border-bottom:1px solid #D5D8EE;&#39;&gt;&lt;b&gt;RNF‑07&lt;/b&gt;&lt;/td&gt;&lt;td style=&#39;padding:5px 8px;border-bottom:1px solid #D5D8EE;&#39;&gt;Consistencia&lt;/td&gt;&lt;td style=&#39;padding:5px 8px;border-bottom:1px solid #D5D8EE;&#39;&gt;&lt;span style=&#39;color:#11795A;font-weight:bold;&#39;&gt;Implementado&lt;/span&gt;&lt;/td&gt;&lt;td style=&#39;padding:5px 8px;border-bottom:1px solid #D5D8EE;&#39;&gt;Una sola base de datos central; las reservas de habitación y cupos de tour usan transacción serializable (con prueba de concurrencia).&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&#39;padding:5px 8px;border-bottom:1px solid #D5D8EE;&#39;&gt;&lt;b&gt;RNF‑08&lt;/b&gt;&lt;/td&gt;&lt;td style=&#39;padding:5px 8px;border-bottom:1px solid #D5D8EE;&#39;&gt;Mantenibilidad&lt;/td&gt;&lt;td style=&#39;padding:5px 8px;border-bottom:1px solid #D5D8EE;&#39;&gt;&lt;span style=&#39;color:#5B3FC4;font-weight:bold;&#39;&gt;Mixto&lt;/span&gt;&lt;/td&gt;&lt;td style=&#39;padding:5px 8px;border-bottom:1px solid #D5D8EE;&#39;&gt;&lt;b&gt;Implementado:&lt;/b&gt; cada capa es un .dll independiente y hay 59 pruebas xUnit. &lt;b&gt;Propuesto:&lt;/b&gt; medir la cobertura (&amp;gt;70 %) y correr las pruebas antes de cada despliegue.&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&#39;padding:5px 8px;border-bottom:1px solid #D5D8EE;&#39;&gt;&lt;b&gt;RNF‑09&lt;/b&gt;&lt;/td&gt;&lt;td style=&#39;padding:5px 8px;border-bottom:1px solid #D5D8EE;&#39;&gt;Portabilidad&lt;/td&gt;&lt;td style=&#39;padding:5px 8px;border-bottom:1px solid #D5D8EE;&#39;&gt;&lt;span style=&#39;color:#5B3FC4;font-weight:bold;&#39;&gt;Mixto&lt;/span&gt;&lt;/td&gt;&lt;td style=&#39;padding:5px 8px;border-bottom:1px solid #D5D8EE;&#39;&gt;&lt;b&gt;Implementado:&lt;/b&gt; Panel Interno web y responsive (Tailwind CSS). &lt;b&gt;Propuesto:&lt;/b&gt; acceso desde tablet o smartphone por el Wi‑Fi interno del hotel.&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td style=&#39;padding:5px 8px;border-bottom:1px solid #D5D8EE;&#39;&gt;&lt;b&gt;RNF‑10&lt;/b&gt;&lt;/td&gt;&lt;td style=&#39;padding:5px 8px;border-bottom:1px solid #D5D8EE;&#39;&gt;Legalidad&lt;/td&gt;&lt;td style=&#39;padding:5px 8px;border-bottom:1px solid #D5D8EE;&#39;&gt;&lt;span style=&#39;color:#5B3FC4;font-weight:bold;&#39;&gt;Mixto&lt;/span&gt;&lt;/td&gt;&lt;td style=&#39;padding:5px 8px;border-bottom:1px solid #D5D8EE;&#39;&gt;&lt;b&gt;Implementado:&lt;/b&gt; acceso por roles y contraseñas cifradas. &lt;b&gt;Propuesto:&lt;/b&gt; datos personales solo en servidores del hotel y cifrados en reposo (Ley 1581 de 2012).&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;div style=&#39;font-size:11px;color:#555;margin-top:8px;&#39;&gt;&lt;b&gt;Supuestos de diseño:&lt;/b&gt; la versión del SO y de SQL Server y los recursos (vCPU, RAM) no salen del código; son la propuesta de infraestructura para el hotel.&lt;/div&gt;" vertex="1">
+          <mxGeometry height="350" width="1690" x="20" y="1250" as="geometry" />
+        </mxCell>
+        <mxCell id="n82" parent="1" style="rounded=1;arcSize=3;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#B9BEE0;" value="" vertex="1">
+          <mxGeometry height="350" width="720" x="1730" y="1250" as="geometry" />
+        </mxCell>
+        <mxCell id="n83" parent="1" style="text;html=1;align=left;" value="&lt;b style=&#39;font-size:14px;color:#3B2A8F&#39;&gt;Notación&lt;/b&gt;" vertex="1">
+          <mxGeometry height="24" width="200" x="1744" y="1258" as="geometry" />
+        </mxCell>
+        <mxCell id="n84" parent="1" style="shape=cube;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;darkOpacity=0.05;darkOpacity2=0.1;size=14;direction=south;verticalAlign=top;align=center;fillColor=#EEF0FB;strokeColor=#3B3F8F;fontColor=#1E2050;collapsible=0;fontSize=12;spacingTop=2;verticalAlign=middle;fontSize=10;" value="«device»" vertex="1">
+          <mxGeometry height="50" width="110" x="1750" y="1294" as="geometry" />
+        </mxCell>
+        <mxCell id="n85" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=11;fontColor=#1E2050;whiteSpace=wrap;" value="&lt;b&gt;Nodo / dispositivo&lt;/b&gt;: hardware físico (servidor, PC, tablet)" vertex="1">
+          <mxGeometry height="50" width="210" x="1875" y="1294" as="geometry" />
+        </mxCell>
+        <mxCell id="n86" parent="1" style="rounded=1;arcSize=5;whiteSpace=wrap;html=1;verticalAlign=top;align=center;fillColor=#DDF6F4;strokeColor=#2BA3A0;strokeWidth=1.5;fontColor=#0F4C4A;collapsible=0;fontSize=11;verticalAlign=middle;fontSize=10;" value="«execution&lt;br&gt;Environment»" vertex="1">
+          <mxGeometry height="46" width="110" x="1750" y="1358" as="geometry" />
+        </mxCell>
+        <mxCell id="n87" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=11;fontColor=#1E2050;whiteSpace=wrap;" value="&lt;b&gt;Entorno de ejecución&lt;/b&gt;: software que aloja artefactos (IIS, .NET, SQL Server)" vertex="1">
+          <mxGeometry height="50" width="210" x="1875" y="1356" as="geometry" />
+        </mxCell>
+        <mxCell id="n88" parent="1" style="shape=note;size=11;whiteSpace=wrap;html=1;fillColor=#FFFFFF;strokeColor=#5B5FC7;fontColor=#1E2050;fontSize=11;fontSize=10;" value="«artifact»" vertex="1">
+          <mxGeometry height="40" width="110" x="1750" y="1420" as="geometry" />
+        </mxCell>
+        <mxCell id="n89" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=11;fontColor=#1E2050;whiteSpace=wrap;" value="&lt;b&gt;Artefacto&lt;/b&gt;: archivo desplegable (.dll, .json, .mdf); anidado = «deploy»" vertex="1">
+          <mxGeometry height="50" width="210" x="1875" y="1416" as="geometry" />
+        </mxCell>
+        <mxCell id="n90" parent="1" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;fillColor=#F1EAFE;strokeColor=#7A4FD6;fontColor=#2A1A5E;fontSize=11;collapsible=0;fontSize=10;" value="«component»" vertex="1">
+          <mxGeometry height="40" width="110" x="1750" y="1478" as="geometry" />
+        </mxCell>
+        <mxCell id="n91" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=11;fontColor=#1E2050;whiteSpace=wrap;" value="&lt;b&gt;Componente&lt;/b&gt; lógico (contenedor del C4 Nivel 2)" vertex="1">
+          <mxGeometry height="50" width="210" x="1875" y="1474" as="geometry" />
+        </mxCell>
+        <mxCell id="n92" parent="1" style="text;" value="" vertex="1">
+          <mxGeometry height="1" width="1" x="2110" y="1314" as="geometry" />
+        </mxCell>
+        <mxCell id="n93" parent="1" style="text;" value="" vertex="1">
+          <mxGeometry height="1" width="1" x="2210" y="1314" as="geometry" />
+        </mxCell>
+        <mxCell id="n94" edge="1" parent="1" source="n92" style="endArrow=oval;startArrow=oval;endFill=0;startFill=0;endSize=8;startSize=8;html=1;strokeColor=#1E2050;strokeWidth=1.5;rounded=0;fontSize=11;fontColor=#1E2050;labelBackgroundColor=#FFFFFF;fontSize=10;" target="n93" value="HTTPS (443)">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n95" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=11;fontColor=#1E2050;whiteSpace=wrap;" value="&lt;b&gt;Ruta de comunicación&lt;/b&gt;: protocolo (puerto)" vertex="1">
+          <mxGeometry height="40" width="210" x="2230" y="1294" as="geometry" />
+        </mxCell>
+        <mxCell id="n96" parent="1" style="text;" value="" vertex="1">
+          <mxGeometry height="1" width="1" x="2110" y="1379" as="geometry" />
+        </mxCell>
+        <mxCell id="n97" parent="1" style="text;" value="" vertex="1">
+          <mxGeometry height="1" width="1" x="2210" y="1379" as="geometry" />
+        </mxCell>
+        <mxCell id="n98" edge="1" parent="1" source="n96" style="endArrow=open;endFill=0;endSize=10;dashed=1;html=1;strokeColor=#7A4FD6;fontColor=#7A4FD6;fontSize=10;labelBackgroundColor=#FFFFFF;rounded=0;" target="n97" value="«manifest»">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n99" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=11;fontColor=#1E2050;whiteSpace=wrap;" value="&lt;b&gt;Manifestación&lt;/b&gt;: el artefacto implementa el componente" vertex="1">
+          <mxGeometry height="44" width="210" x="2230" y="1358" as="geometry" />
+        </mxCell>
+        <mxCell id="n100" parent="1" style="text;" value="" vertex="1">
+          <mxGeometry height="1" width="1" x="2110" y="1439" as="geometry" />
+        </mxCell>
+        <mxCell id="n101" parent="1" style="text;" value="" vertex="1">
+          <mxGeometry height="1" width="1" x="2210" y="1439" as="geometry" />
+        </mxCell>
+        <mxCell id="n102" edge="1" parent="1" source="n100" style="endArrow=oval;startArrow=oval;endFill=0;startFill=0;endSize=8;startSize=8;html=1;strokeColor=#1E2050;strokeWidth=1.5;rounded=0;fontSize=11;fontColor=#1E2050;labelBackgroundColor=#FFFFFF;dashed=1;strokeColor=#7A7A7A;fontSize=10;" target="n101" value="[pendiente]">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n103" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=11;fontColor=#1E2050;whiteSpace=wrap;" value="&lt;b&gt;Pendiente&lt;/b&gt;: elemento aún no definido (pasarela de pagos)" vertex="1">
+          <mxGeometry height="44" width="210" x="2230" y="1418" as="geometry" />
+        </mxCell>
+        <mxCell id="n104" parent="1" style="shape=note;size=16;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacingLeft=10;spacingTop=4;fillColor=#FAFAFF;strokeColor=#5B5FC7;fontColor=#1E2050;fontSize=11;fontFamily=Courier New;fontSize=10;align=center;spacingLeft=0;verticalAlign=middle;fontFamily=Helvetica;" value="&lt;b&gt;«deployment spec»&lt;/b&gt;" vertex="1">
+          <mxGeometry height="40" width="110" x="2110" y="1478" as="geometry" />
+        </mxCell>
+        <mxCell id="n105" parent="1" style="text;html=1;align=left;verticalAlign=middle;fontSize=11;fontColor=#1E2050;whiteSpace=wrap;" value="&lt;b&gt;Especificación de despliegue&lt;/b&gt;: configuración y recursos del nodo" vertex="1">
+          <mxGeometry height="50" width="210" x="2230" y="1474" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

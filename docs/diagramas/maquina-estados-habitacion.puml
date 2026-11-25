@@ -1,0 +1,30 @@
+@startuml
+title Máquina de estados - Habitacion (HU-05, HU-06 y HU-11)
+hide empty description
+skinparam state {
+  BackgroundColor #E1F5FE
+  BorderColor #0288D1
+  StartColor #00695C
+  ArrowColor #37474F
+}
+state Disponible
+Disponible : entry / notificarObservadores()
+state Ocupada
+Ocupada : entry / notificarObservadores()
+state EnLimpieza
+EnLimpieza : entry / notificarObservadores()
+EnLimpieza : entry / agregarAPlanDeLimpieza()
+state Mantenimiento
+Mantenimiento : entry / notificarObservadores()
+Mantenimiento : entry / guardarNotaIncidencia()
+
+[*] --> Disponible : registrarHabitacion() [numeroUnico]
+Disponible --> Ocupada : registrarCheckIn() [reservaConfirmada]
+Ocupada --> EnLimpieza : registrarCheckOut() [cuentaCerrada]
+EnLimpieza --> Disponible : finalizarAseo()
+Disponible --> EnLimpieza : enviarALimpieza()
+Disponible --> Mantenimiento : reportarIncidencia(nota) [notaNoVacia]
+EnLimpieza --> Mantenimiento : reportarIncidencia(nota) [notaNoVacia]
+Mantenimiento --> Disponible : resolverIncidencia()
+Mantenimiento --> EnLimpieza : enviarALimpieza()
+@enduml
