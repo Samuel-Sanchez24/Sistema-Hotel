@@ -1,0 +1,45 @@
+@startuml secuencia-hu05
+title HU-05 · Visualizar la disponibilidad de habitaciones en tiempo real (RF-07, RN-02) · Observer
+autonumber
+skinparam shadowing false
+skinparam sequenceMessageAlign center
+
+actor "Recepción" as rec
+boundary "Vista: Panel de
+habitaciones" as vista
+control "RecepcionController" as ctrl
+participant "HabitacionService" as svc
+participant "IHabitacionRepository" as repo <<interface>>
+entity "Habitacion" as hab
+participant "PanelRecepcion
+«observador»" as panel
+control "EventosController" as ev
+
+rec -> vista : abrir el panel (piso)
+vista -> ctrl : Index(piso, estado)
+ctrl -> svc : Listar()
+svc -> repo : Listar()
+repo --> svc : habitaciones con su estado
+svc --> ctrl : HabitacionDto[] (estado y estancia)
+ctrl -> panel : UltimasNovedades
+panel --> ctrl : últimos cambios de estado
+ctrl --> vista : conteo por estado, habitaciones del piso y novedades
+loop cada 3 segundos, mientras el panel está abierto
+  opt housekeeping o recepción cambió el estado de una habitación (HU-11, HU-06)
+    hab -> panel : Actualizar(habitacion, estadoAnterior)
+    panel -> panel : guardar la novedad y Version++
+  end
+  vista -> ev : Version("recepcion")
+  alt sin sesión
+    ev --> vista : 401 No autorizado
+  else con sesión
+    ev -> panel : Version
+    panel --> ev : número de versión
+    ev --> vista : versión
+    opt la versión cambió
+      vista -> ctrl : recargar: Index(piso, estado)
+    end
+  end
+end
+note over hab : Observer: la habitación notifica a sus observadores en cada cambio de estado, sin conocer las pantallas.
+@enduml

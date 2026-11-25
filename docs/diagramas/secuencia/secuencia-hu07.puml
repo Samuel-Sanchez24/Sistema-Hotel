@@ -1,0 +1,53 @@
+@startuml secuencia-hu07
+title HU-07 · Solicitar y consultar servicios adicionales (RF-05, RN-06, RN-07)
+autonumber
+skinparam shadowing false
+skinparam sequenceMessageAlign center
+
+actor "Huésped" as hue
+boundary "Vista: Solicitar
+servicio" as vista
+control "HuespedController" as ctrl
+participant "ServicioAdicionalService" as svc
+participant "ICuentaRepository" as cta <<interface>>
+participant "IServicioAdicionalRepository" as srep <<interface>>
+entity "SolicitudServicio" as sol
+participant "IUnidadDeTrabajo" as uow <<interface>>
+
+note over ctrl : Solo el rol Huésped entra a estas pantallas; sin sesión, el sistema lo envía al login (HU-07 Esc.5).
+hue -> vista : elegir un servicio del catálogo
+vista -> ctrl : Solicitar(servicioId)
+ctrl -> svc : SolicitarServicio(huespedId, servicioId)
+svc -> cta : ObtenerAbiertaPorHuesped(huespedId)
+cta --> svc : cuenta abierta o null
+alt sin cuenta abierta: no hay check-in (HU-07 Esc.2)
+  svc --> ctrl : ReglaNegocioException: necesita un check-in activo
+  ctrl --> vista : aviso de error
+else con check-in activo
+  svc -> srep : ObtenerPorId(servicioId)
+  srep --> svc : servicio
+  svc -> sol ** : new SolicitudServicio(cuenta, servicio, ahora)
+  alt servicio inactivo o cuenta cerrada (RN-07)
+    sol --> svc : ReglaNegocioException
+    svc --> ctrl : error
+    ctrl --> vista : aviso: el servicio no está disponible
+  else servicio activo (HU-07 Esc.1)
+    svc -> srep : AgregarSolicitud(solicitud)
+    svc -> uow : GuardarCambios()
+    svc --> ctrl : SolicitudServicioDto
+    ctrl --> vista : Solicitud enviada: servicio y habitación
+  end
+end
+hue -> vista : abrir Mis consumos
+vista -> ctrl : Consumos()
+ctrl -> svc : ConsumosDeHuesped(huespedId)
+svc -> cta : ObtenerAbiertaPorHuesped(huespedId)
+cta --> svc : cuenta con sus consumos
+alt con consumos registrados (HU-07 Esc.3)
+  svc --> ctrl : ConsumoDto[] ordenados por fecha
+  ctrl --> vista : lista de consumos y total
+else sin consumos o sin cuenta (HU-07 Esc.4)
+  svc --> ctrl : lista vacía
+  ctrl --> vista : mensaje: aún no hay consumos
+end
+@enduml

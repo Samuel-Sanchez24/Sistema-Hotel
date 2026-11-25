@@ -1,0 +1,553 @@
+' C4 nivel 4 (código): un diagrama de clases por componente del nivel 3.
+' Alineado con el repositorio Sistema-Hotel (commit 4b7fb6d). Cada bloque @startuml ... @enduml se pega por separado.
+
+@startuml nivel4-usuarios
+title Nivel 4 — Usuarios y Accesos (HU-01 y HU-02) · Factory Method
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam packageStyle rectangle
+hide empty members
+
+package "HotelSystem.Application / Usuarios" {
+  interface IAuthService {
+    +IniciarSesion(usuario, contrasena)
+  }
+  class AuthService
+  interface IUsuarioService {
+    +CrearEmpleado(nombre, correo, rol, administradorId)
+    +CambiarRol(empleadoId, rol, administradorId)
+    +CambiarEstado(empleadoId, activo, administradorId)
+    +RegistrarHuesped(datos)
+  }
+  class UsuarioService
+  abstract class CreadorUsuario <<Factory Method · creador>> {
+    +Registrar(datos): UsuarioCreado
+    #CrearUsuario(datos, usuario, claveHash): Persona {abstract}
+    #ValidarDatosPropios(datos)
+  }
+  class CreadorHuesped <<creador concreto>> {
+    #CrearUsuario(...): Huesped
+    #ValidarDatosPropios(datos)  [RN-10]
+  }
+  class CreadorEmpleado <<creador concreto>> {
+    #CrearUsuario(...): Empleado
+    #ValidarDatosPropios(datos)  [RN-08]
+  }
+}
+package "HotelSystem.Domain" {
+  abstract class Persona {
+    +Id: int
+    +Nombre: string
+    +Correo: string
+    +Usuario: string
+    +FechaNacimiento: DateOnly?
+    +Activo: bool
+    --
+    +EsMayorDeEdad(hoy): bool
+    +Desactivar()
+    +Reactivar()
+  }
+  class Huesped {
+    +Telefono: string?
+  }
+  class Empleado {
+    +Rol: RolEmpleado
+    --
+    +CambiarRol(nuevoRol)
+  }
+  enum RolEmpleado {
+    Recepcion
+    Housekeeping
+    CoordinadorTours
+    Servicios
+    Administrador
+  }
+}
+package "Abstracciones (las implementan Persistence e Infrastructure)" {
+  interface IPersonaRepository {
+    +BuscarPorUsuario(usuario)
+    +ExisteCorreo(correo): bool
+    +Agregar(persona)
+  }
+  interface IHasherContrasenas {
+    +Hash(contrasena): string
+    +Verificar(contrasena, hash): bool
+  }
+}
+
+AuthService ..|> IAuthService
+UsuarioService ..|> IUsuarioService
+AuthService ..> IPersonaRepository
+AuthService ..> IHasherContrasenas : verifica
+UsuarioService ..> CreadorEmpleado : registra empleados
+UsuarioService ..> CreadorHuesped : registra huéspedes
+CreadorHuesped --|> CreadorUsuario
+CreadorEmpleado --|> CreadorUsuario
+CreadorUsuario ..> IPersonaRepository
+CreadorUsuario ..> IHasherContrasenas
+CreadorHuesped ..> Huesped : «crea»
+CreadorEmpleado ..> Empleado : «crea»
+Huesped --|> Persona
+Empleado --|> Persona
+Empleado --> RolEmpleado : 1 rol (RN-08)
+@enduml
+
+@startuml nivel4-reservas
+title Nivel 4 — Reservas (HU-03, HU-04, HU-05 y HU-06 (check-in)) · Observer
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam packageStyle rectangle
+hide empty members
+
+package "HotelSystem.Application / Reservas" {
+  interface IReservaService {
+    +BuscarDisponibles(tipo, entrada, salida, personas)
+    +ReservarHabitacion(solicitud)
+    +CancelarReserva(reservaId, huespedId)
+    +RegistrarCheckIn(reservaId, empleadoId)
+    +RegistrarSalida(reservaId, empleadoId)
+  }
+  class ReservaService
+  interface IPoliticaCancelacion {
+    +Evaluar(reserva, ahora): ResultadoCancelacion
+  }
+  class PoliticaCancelacion48Horas {
+    +Evaluar(reserva, ahora)  [RN-09]
+  }
+  class SuscriptorHabitaciones <<Observer>> {
+    +Suscribir(habitacion)
+  }
+  class PanelRecepcion <<observador concreto>> {
+    +Version: long
+    +UltimasNovedades
+    --
+    +Actualizar(habitacion, estadoAnterior)
+  }
+  class PanelHousekeeping <<observador concreto>> {
+    +Version: long
+    --
+    +Actualizar(habitacion, estadoAnterior)
+  }
+}
+package "HotelSystem.Domain" {
+  class ReservaHabitacion {
+    +FechaEntrada: DateOnly
+    +FechaSalida: DateOnly
+    +CantidadHuespedes: int
+    +PrecioNoche: decimal
+    +Estado: EstadoReserva
+    +MedioPago: TipoPago?
+    --
+    +Confirmar(medioPago, detalle)
+    +RegistrarCheckIn(ahora)
+    +RegistrarSalida(ahora)
+    +Cancelar(cargo, ahora)
+    +SeCruzaCon(entrada, salida): bool
+  }
+  enum EstadoReserva {
+    Solicitada
+    Confirmada
+    EnCurso
+    Finalizada
+    Cancelada
+  }
+  enum TipoPago {
+    Efectivo
+    Tarjeta
+    Transferencia
+    Deposito
+  }
+  interface IObservadorHabitacion <<Observer · observador>> {
+    +Actualizar(habitacion, estadoAnterior)
+  }
+}
+package "Abstracciones (las implementan Persistence e Infrastructure)" {
+  interface IReservaHabitacionRepository {
+    +ExisteCruce(habitacionId, entrada, salida): bool
+    +Agregar(reserva)
+  }
+  interface IServicioCorreo {
+    +Enviar(mensaje): bool
+  }
+  interface IUnidadDeTrabajo {
+    +EnTransaccion(accion)
+    +GuardarCambios()
+  }
+}
+package "Clases de otros componentes" #F5F5F5 {
+  class Habitacion
+  class Huesped
+  class Cuenta
+}
+
+ReservaService ..|> IReservaService
+PoliticaCancelacion48Horas ..|> IPoliticaCancelacion
+ReservaService ..> IPoliticaCancelacion : RN-09
+ReservaService ..> IReservaHabitacionRepository
+ReservaService ..> IServicioCorreo : HU-04
+ReservaService ..> IUnidadDeTrabajo : RNF-07
+ReservaService ..> SuscriptorHabitaciones
+ReservaService ..> ReservaHabitacion : «crea»
+ReservaHabitacion --> Huesped : titular
+ReservaHabitacion --> Habitacion : bloquea fechas (RN-01)
+ReservaHabitacion --> Cuenta : abre la cuenta (RN-07)
+ReservaHabitacion --> EstadoReserva
+ReservaHabitacion --> TipoPago : RN-04
+PanelRecepcion ..|> IObservadorHabitacion
+PanelHousekeeping ..|> IObservadorHabitacion
+SuscriptorHabitaciones ..> Habitacion : suscribe los paneles
+Habitacion --> IObservadorHabitacion : notifica a 0..*
+@enduml
+
+@startuml nivel4-housekeeping
+title Nivel 4 — Housekeeping (HU-05 y HU-11) · State
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam packageStyle rectangle
+hide empty members
+
+package "HotelSystem.Application / Housekeeping" {
+  interface IHabitacionService {
+    +Listar()
+    +CambiarEstado(habitacionId, nuevoEstado, nota, empleadoId)
+    +PlanLimpieza()
+  }
+  class HabitacionService
+}
+package "HotelSystem.Domain" {
+  class Habitacion <<State · contexto, Observer · sujeto>> {
+    +Numero: string
+    +Tipo: TipoHabitacion
+    +Piso: int
+    +Capacidad: int
+    +PrecioNoche: decimal
+    +Estado: EstadoHabitacion
+    +NotaMantenimiento: string?
+    --
+    +Ocupar(ahora)
+    +Liberar(ahora)
+    +MarcarDisponible(ahora)
+    +EnviarALimpieza(ahora)
+    +EnviarAMantenimiento(nota, ahora)
+    +Suscribir(observador)
+    ~CambiarEstado(nuevo, ahora, nota)
+  }
+  interface IEstadoHabitacion <<State · estado>> {
+    +Ocupar(habitacion, ahora)
+    +Liberar(habitacion, ahora)
+    +MarcarDisponible(habitacion, ahora)
+    +EnviarALimpieza(habitacion, ahora)
+    +EnviarAMantenimiento(habitacion, nota, ahora)
+  }
+  abstract class EstadoHabitacionBase <<State>> {
+    (las 5 operaciones rechazan por defecto)
+    #Rechazar(habitacion, accion)  [RN-02]
+  }
+  class EstadoDisponible <<estado concreto>> {
+    +Ocupar()
+    +EnviarALimpieza()
+    +EnviarAMantenimiento()
+  }
+  class EstadoOcupada <<estado concreto>> {
+    +Liberar()
+  }
+  class EstadoEnLimpieza <<estado concreto>> {
+    +MarcarDisponible()
+    +EnviarAMantenimiento()
+  }
+  class EstadoMantenimiento <<estado concreto>> {
+    +MarcarDisponible()
+    +EnviarALimpieza()
+  }
+  enum EstadoHabitacion {
+    Disponible
+    Ocupada
+    EnLimpieza
+    Mantenimiento
+  }
+  enum TipoHabitacion {
+    Simple
+    Doble
+    Suite
+  }
+}
+package "Abstracciones (las implementa Persistence)" {
+  interface IHabitacionRepository {
+    +Listar()
+    +ObtenerPorId(id)
+  }
+}
+package "Clases de otros componentes" #F5F5F5 {
+  class SuscriptorHabitaciones
+  interface IObservadorHabitacion
+}
+
+HabitacionService ..|> IHabitacionService
+HabitacionService ..> IHabitacionRepository
+HabitacionService ..> SuscriptorHabitaciones
+HabitacionService ..> Habitacion : cambia el estado
+Habitacion --> IEstadoHabitacion : estado actual (delega)
+Habitacion --> IObservadorHabitacion : notifica a 0..*
+Habitacion --> EstadoHabitacion
+Habitacion --> TipoHabitacion
+EstadoHabitacionBase ..|> IEstadoHabitacion
+EstadoDisponible --|> EstadoHabitacionBase
+EstadoOcupada --|> EstadoHabitacionBase
+EstadoEnLimpieza --|> EstadoHabitacionBase
+EstadoMantenimiento --|> EstadoHabitacionBase
+@enduml
+
+@startuml nivel4-servicios
+title Nivel 4 — Servicios Adicionales (HU-07 y HU-08)
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam packageStyle rectangle
+hide empty members
+
+package "HotelSystem.Application / ServiciosAdicionales" {
+  interface IServicioAdicionalService {
+    +ListarCatalogo(soloActivos)
+    +SolicitarServicio(huespedId, servicioId)
+    +ConsumosDeHuesped(huespedId)
+    +ActualizarSolicitud(solicitudId, estado, empleadoId)
+    +RegistrarConsumo(registro)
+  }
+  class ServicioAdicionalService
+}
+package "HotelSystem.Domain" {
+  class ServicioAdicional {
+    +Nombre: string
+    +Categoria: string
+    +PrecioUnitario: decimal
+    +Activo: bool
+  }
+  class SolicitudServicio {
+    +Estado: EstadoSolicitud
+    +FechaSolicitud: DateTime
+    --
+    +Atender(ahora)
+    +Completar(ahora)
+  }
+  enum EstadoSolicitud {
+    Pendiente
+    EnProceso
+    Completada
+  }
+  class ConsumoServicio {
+    +Cantidad: int
+    +PrecioAplicado: decimal
+    +FechaHora: DateTime
+    /Subtotal: decimal
+  }
+}
+package "Abstracciones (las implementa Persistence)" {
+  interface IServicioAdicionalRepository {
+    +ObtenerPorId(id)
+    +AgregarSolicitud(solicitud)
+  }
+  interface ICuentaRepository {
+    +ObtenerAbiertaPorHabitacion(habitacionId)
+    +ObtenerAbiertaPorHuesped(huespedId)
+    +AgregarPrefactura(prefactura)
+  }
+  interface IUnidadDeTrabajo {
+    +EnTransaccion(accion)
+    +GuardarCambios()
+  }
+}
+package "Clases de otros componentes" #F5F5F5 {
+  class Cuenta
+}
+
+ServicioAdicionalService ..|> IServicioAdicionalService
+ServicioAdicionalService ..> IServicioAdicionalRepository
+ServicioAdicionalService ..> ICuentaRepository : cuenta abierta (RN-07)
+ServicioAdicionalService ..> IUnidadDeTrabajo
+ServicioAdicionalService ..> SolicitudServicio : «crea» (HU-07)
+SolicitudServicio --> Cuenta : de la estancia
+SolicitudServicio --> ServicioAdicional
+SolicitudServicio --> EstadoSolicitud
+Cuenta *-- ConsumoServicio : 0..* consumos (HU-08, RN-06)
+ConsumoServicio --> ServicioAdicional
+@enduml
+
+@startuml nivel4-tours
+title Nivel 4 — Tours (HU-09 y HU-10)
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam packageStyle rectangle
+hide empty members
+
+package "HotelSystem.Application / Tours" {
+  interface ITourService {
+    +ReservarTour(solicitud)
+    +BloquearCupos(tourId, cantidad, empleadoId)
+    +LiberarCupos(tourId, cantidad, empleadoId)
+    +AsignarRecursos(tourId, guiaId, vehiculoId, empleadoId)
+    +LiberarRecursos(tourId, empleadoId)
+  }
+  class TourService
+}
+package "HotelSystem.Domain" {
+  class Tour {
+    +Nombre: string
+    +Fecha: DateOnly
+    +HorarioInicio: TimeOnly
+    +HorarioFin: TimeOnly
+    +CupoMaximo: int
+    +CuposReservados: int
+    +PrecioPorPersona: decimal
+    --
+    +SeCruzaCon(otro): bool
+    +BloquearCupos(cantidad)
+    +LiberarCupos(cantidad)
+    +AsignarRecursos(guia, vehiculo)
+  }
+  class ReservaTour {
+    +NumeroPersonas: int
+    +PrecioPorPersona: decimal
+    +Estado: EstadoReserva
+    +MedioPago: TipoPago
+    --
+    +CalcularTotal(): decimal
+    +Cancelar(ahora)
+  }
+  class Guia {
+    +Nombre: string
+    +Activo: bool
+  }
+  class Vehiculo {
+    +Placa: string
+    +CapacidadPasajeros: int
+    --
+    +EsAptoParaGrupo(personas): bool
+  }
+  interface ICalculable {
+    +CalcularTotal(): decimal
+  }
+}
+package "Abstracciones (las implementa Persistence)" {
+  interface ITourRepository {
+    +ObtenerPorId(id)
+    +Listar()
+    +AgregarReserva(reserva)
+  }
+  interface IUnidadDeTrabajo {
+    +EnTransaccion(accion)
+    +GuardarCambios()
+  }
+}
+package "Clases de otros componentes" #F5F5F5 {
+  class Huesped
+  class Cuenta
+}
+
+TourService ..|> ITourService
+TourService ..> ITourRepository
+TourService ..> IUnidadDeTrabajo : RN-05, RNF-07
+TourService ..> ReservaTour : «crea» (HU-09)
+Tour *-- ReservaTour : 0..* reservas
+Tour --> Guia : 0..1 (RN-03)
+Tour --> Vehiculo : 0..1 (RN-03)
+ReservaTour ..|> ICalculable
+ReservaTour --> Huesped : titular (RN-10)
+ReservaTour --> Cuenta : se carga a (RN-07)
+@enduml
+
+@startuml nivel4-cierre
+title Nivel 4 — Cierre de Cuenta y Reportes (HU-06 (check-out), HU-12 y HU-13) · Facade y Strategy
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam packageStyle rectangle
+hide empty members
+
+package "HotelSystem.Application / CierreCuenta" {
+  interface ICuentaService {
+    +ConsultarDeHuesped(huespedId)
+    +GenerarPrefactura(habitacionId, empleadoId)
+    +CerrarCuenta(solicitud)
+  }
+  class CuentaFacade <<Facade>> {
+    +GenerarPrefactura(habitacionId, empleadoId)
+    +CerrarCuenta(solicitud)  [RN-07, RN-02]
+  }
+  interface IReporteService {
+    +Generar(desde, hasta): ReporteGestion
+    +Exportar(desde, hasta, formato, empleadoId): ArchivoExportado
+  }
+  class GeneradorReportes <<Strategy · contexto>>
+  interface IExportadorReporte <<Strategy · estrategia>> {
+    +FormatoSoportado: FormatoReporte
+    --
+    +Exportar(reporte): ArchivoExportado
+  }
+}
+package "HotelSystem.Domain" {
+  class Cuenta {
+    +Estado: EstadoCuenta
+    +MedioPago: TipoPago?
+    +MontoPagado: decimal
+    --
+    +CalcularTotal(): decimal
+    +RegistrarConsumo(servicio, cantidad, precio, fecha)
+    +RegistrarPago(monto, medio, detalle, fecha)
+  }
+  class Prefactura {
+    +MontoAlojamiento: decimal
+    +MontoServicios: decimal
+    +MontoTours: decimal
+    +MontoTotal: decimal
+    +EsFinal: bool
+  }
+  enum EstadoCuenta {
+    Abierta
+    Cerrada
+    Anulada
+  }
+  interface ICalculable {
+    +CalcularTotal(): decimal
+  }
+  interface IPagable {
+    +RegistrarPago(monto, medio, detalle, fecha)
+  }
+  class RegistroOperacion {
+    +Tipo: TipoOperacion
+    +Detalle: string
+    +FechaHora: DateTime
+  }
+}
+package "HotelSystem.Infrastructure / Reportes" {
+  class ExportadorPDF <<estrategia concreta>> {
+    +Exportar(reporte)
+  }
+  class ExportadorExcel <<estrategia concreta>> {
+    +Exportar(reporte)
+  }
+}
+package "Clases de otros componentes" #F5F5F5 {
+  interface IReservaService
+  interface ITourService
+  interface IServicioAdicionalService
+  interface ICuentaRepository
+  interface IHabitacionRepository
+  interface IUnidadDeTrabajo
+}
+
+CuentaFacade ..|> ICuentaService
+CuentaFacade ..> ICuentaRepository
+CuentaFacade ..> IHabitacionRepository : libera la habitación (RN-02)
+CuentaFacade ..> IReservaService : registra la salida
+CuentaFacade ..> ITourService
+CuentaFacade ..> IServicioAdicionalService
+CuentaFacade ..> IUnidadDeTrabajo : todo o nada
+CuentaFacade ..> Prefactura : «crea»
+Cuenta *-- Prefactura : 0..*
+Cuenta ..|> ICalculable
+Cuenta ..|> IPagable
+Cuenta --> EstadoCuenta
+GeneradorReportes ..|> IReporteService
+GeneradorReportes ..> IExportadorReporte : elige por formato
+GeneradorReportes ..> RegistroOperacion : reporte de personal
+ExportadorPDF ..|> IExportadorReporte
+ExportadorExcel ..|> IExportadorReporte
+@enduml

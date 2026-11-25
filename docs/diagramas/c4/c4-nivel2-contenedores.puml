@@ -1,0 +1,36 @@
+@startuml nivel2-contenedores
+!include <C4/C4_Container>
+
+title Sistema de Gestión Hotelera — Hotel Fast and Furious\nNivel 2 — Diagrama de contenedores (Entregable 3)
+
+Person(huesped, "Huésped", "Reserva habitaciones y tours, solicita servicios y consulta su cuenta")
+Person(personal, "Personal del hotel", "5 roles: recepción, housekeeping, coordinador de tours, servicios y administración")
+System_Ext(cliente, "Cliente externo", "Front HTML/JS u otra aplicación. Consume la API REST")
+System_Ext(correo, "Servicio de correo electrónico", "SMTP. Envío de confirmaciones (RF-02)")
+System_Ext(pasarela, "Pasarela de pagos", "[proyectada, fuera del MVP]")
+
+System_Boundary(sistema, "Sistema de Gestión Hotelera") {
+    Container(web, "Aplicación web (HotelSystem.Web)", "C#, ASP.NET Core MVC, Razor, Tailwind CSS", "Portal del huésped y panel interno del personal. Cada rol ve solo sus pantallas. Incluye las capas Application, Domain, Persistence e Infrastructure")
+    Container(api, "API REST (HotelSystem.API)", "C#, ASP.NET Core Web API, JWT", "Expone los mismos servicios para clientes externos. Incluye las mismas capas que la web")
+    ContainerDb(bd, "Base de datos", "SQL Server (LocalDB) o SQLite", "Habitaciones, reservas, usuarios, tours, consumos y cuentas")
+}
+
+Rel(huesped, web, "Reserva y consulta", "HTTPS")
+Rel(personal, web, "Opera el día a día", "HTTPS")
+Rel(cliente, api, "Consume", "HTTPS/JSON + JWT")
+Rel(web, bd, "Lee y escribe", "EF Core, TCP 1433")
+Rel(api, bd, "Lee y escribe", "EF Core, TCP 1433")
+Rel(web, correo, "Envía confirmación", "SMTP")
+Rel(api, correo, "Envía confirmación", "SMTP")
+Rel(web, pasarela, "Validaría el pago", "RN-04 · proyectado")
+
+SHOW_LEGEND()
+
+note as N1
+  <b>Cambio frente al E2:</b> la web MVC ya no llama a la API:
+  usa la capa de aplicación en el mismo proceso. La API expone
+  los mismos servicios para clientes externos. Las reglas de
+  negocio (RN-01 a RN-11) están una sola vez, en Application.
+end note
+
+@enduml

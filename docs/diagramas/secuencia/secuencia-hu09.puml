@@ -1,0 +1,56 @@
+@startuml secuencia-hu09
+title HU-09 · Reservar un tour en línea (RF-03, RF-04, RN-04, RN-05, RN-07, RN-10, RN-11)
+autonumber
+skinparam shadowing false
+skinparam sequenceMessageAlign center
+
+actor "Huésped" as hue
+boundary "Vista: Reservar
+tour" as vista
+control "HuespedController" as ctrl
+participant "TourService" as svc
+participant "IUnidadDeTrabajo" as uow <<interface>>
+participant "Repositorios
+(personas, tours,
+reservas, cuentas)" as repo
+entity "Tour" as tour
+entity "ReservaTour" as rt
+entity "Cuenta" as cta
+
+hue -> vista : elegir tour, personas y medio de pago; confirmar mayoría de edad
+vista -> ctrl : ConfirmarTour(form)
+ctrl -> svc : ReservarTour(solicitud)
+alt no confirma la mayoría de edad (HU-09 Esc.4)
+  svc --> ctrl : ReglaNegocioException RN-10
+else sin medio de pago (HU-09 Esc.3)
+  svc --> ctrl : ReglaNegocioException RN-04
+else datos completos
+  svc -> uow : EnTransaccion(...)  [serializable]
+  svc -> repo : ObtenerHuesped(huespedId), ObtenerPorId(tourId)
+  repo --> svc : huésped y tour
+  alt titular menor de edad por su fecha de nacimiento
+    svc --> ctrl : ReglaNegocioException RN-10
+  else personas > cupos disponibles (HU-09 Esc.2)
+    svc --> ctrl : ReglaNegocioException RN-11
+  else hay cupos
+    svc -> repo : estancia vigente en la fecha del tour y su cuenta
+    repo --> svc : cuenta o null
+    alt sin estancia vigente o cuenta cerrada
+      svc --> ctrl : ReglaNegocioException RN-07
+    else cuenta abierta (HU-09 Esc.1)
+      svc -> tour : BloquearCupos(personas)  [RN-05, RN-11]
+      svc -> rt ** : new ReservaTour(tour, huesped, cuenta, personas, medioPago)
+      rt -> cta : AgregarTour(reserva)  [RN-07]
+      svc -> repo : AgregarReserva(reserva)
+      svc -> uow : GuardarCambios()
+      svc --> ctrl : ReservaTourDto
+    end
+  end
+end
+alt reserva confirmada
+  ctrl --> vista : Tour reservado: nombre y personas
+else ReglaNegocioException
+  ctrl --> vista : mensaje de la regla en el formulario
+end
+note over svc : Los cupos se comprueban y se bloquean en la misma transacción serializable: dos huéspedes no pueden tomar el último cupo (RN-05, RNF-07).
+@enduml

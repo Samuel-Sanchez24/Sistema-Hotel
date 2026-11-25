@@ -95,7 +95,15 @@ servicios por REST. Así las reglas de negocio están en un solo lugar y las dos
 Los seis componentes del **C4 nivel 3** son las carpetas de `HotelSystem.Application`: `Usuarios`
 (Usuarios y Accesos), `Reservas`, `ServiciosAdicionales`, `Tours`, `Housekeeping` y `CierreCuenta`.
 
-### 3.2 Patrones GoF
+### 3.2 Tipo de arquitectura
+
+Arquitectura **en capas** de tipo cliente-servidor web: presentación (`Web` y `API`), aplicación, dominio e
+infraestructura (`Persistence` e `Infrastructure`). Las dependencias apuntan hacia el dominio, como en la
+arquitectura limpia (Clean Architecture), y la capa de aplicación define las interfaces que la infraestructura
+implementa. La presentación web usa MVC. Se despliega como un backend monolítico y modular con dos entradas
+(web MVC y API REST) que comparten las mismas reglas de negocio.
+
+### 3.3 Patrones GoF
 
 | Patrón | Dónde está | Qué resuelve |
 |---|---|---|
@@ -105,7 +113,7 @@ Los seis componentes del **C4 nivel 3** son las carpetas de `HotelSystem.Applica
 | **Factory Method** | `Usuarios/CreadorUsuario.cs` (creador abstracto), `CreadorHuesped`, `CreadorEmpleado` | El flujo de alta es común; cada subclase decide qué `Persona` crea y sus validaciones (RN-10 para huésped, RN-08 para empleado) (HU-01) |
 | **Strategy** | Interfaz `CierreCuenta/IExportadorReporte.cs`; estrategias `Infrastructure/Reportes/ExportadorPDF.cs` y `ExportadorExcel.cs`; contexto `GeneradorReportes` | El formato del reporte se elige en tiempo de ejecución. Un formato nuevo es una clase nueva y una línea en la inyección de dependencias (HU-13) |
 
-### 3.3 Principios SOLID: del prototipo del Entregable 2 al MVP
+### 3.4 Principios SOLID: del prototipo del Entregable 2 al MVP
 
 | Principio | Antes (prototipo del E2) | Ahora (MVP) |
 |---|---|---|
@@ -354,12 +362,13 @@ conectadas a la misma base de datos SQL Server.
 | Historias de usuario (proyecto HFF) | [Jira](https://quintero127.atlassian.net/jira/software/projects/HFF/boards/2/backlog) |
 | Story Map | [Google Slides](https://docs.google.com/presentation/d/1rkfvhxB7-3KXSaDZFNRrTovoZ69rD9Z4/edit) |
 | Prototipo de alta fidelidad | [Figma](https://www.figma.com/make/tm2Bd4fuzqLBdEPj1MRQql/Modelo-de-alta-fidelidad) |
-| Arquitectura C4, niveles 1 a 4; el nivel 4 es el diagrama de clases (código PlantUML) | [Google Docs](https://docs.google.com/document/d/1mwgMrzx3fXkFCij9YVGFQA_9kT2u5TECGh1A4_D69wY/edit) |
+| Arquitectura C4 del E2, niveles 1 a 4 (código PlantUML) | [Google Docs](https://docs.google.com/document/d/1mwgMrzx3fXkFCij9YVGFQA_9kT2u5TECGh1A4_D69wY/edit) |
+| **C4 actualizado en el E3**: niveles 2 y 3, y nivel 4 con un diagrama de clases por componente (PlantUML e imágenes) | [docs/diagramas/c4](docs/diagramas/c4/) |
 | Diagramas de actividades (código PlantUML) | [Google Docs](https://docs.google.com/document/d/1M8i7O0rPfl7FbJvxMYM7ehhyvY_yEY23Wl_JAg4qSyQ/edit) |
 | Diagramas de máquina de estados | [Google Docs](https://docs.google.com/document/d/1Lryi31DVl2reo9ODAlTUJqgTCMBSWynU/edit); habitación: [PlantUML](docs/diagramas/maquina-estados-habitacion.puml) e [imagen](docs/diagramas/maquina-estados-habitacion.png) |
 | Diagrama de componentes | [draw.io](docs/diagramas/componentes.drawio) |
 | Diagrama de despliegue | [draw.io](docs/diagramas/despliegue.drawio) e [imagen en Google Drive](https://drive.google.com/file/d/1L5bpPicHSzEM9eUDaBPZX6vdBuLUdVyp/view) |
-| Diagramas de secuencia | [Lucidchart](https://lucid.app/lucidchart/2f6c462b-fac8-4832-bd2e-ed2203e8798c/edit) |
+| Diagramas de secuencia | [Lucidchart](https://lucid.app/lucidchart/2f6c462b-fac8-4832-bd2e-ed2203e8798c/edit) (8 escenarios) y [docs/diagramas/secuencia](docs/diagramas/secuencia/) (HU-05, HU-07 y HU-09, en PlantUML) |
 | Plantilla de análisis y selección de patrones GoF | [Google Drive](https://drive.google.com/file/d/1HXOqXD3JjyM74nqcf_RXlP-XE-poq9rC/view) |
 | Plantilla de análisis de principios SOLID | [Google Drive](https://drive.google.com/file/d/1bBzU5oWOBgCcr3ADfMN0Fjd1BaRfZG24/view) |
 
@@ -409,8 +418,9 @@ El equipo usó Claude (Anthropic) como asistente durante el Entregable 3:
   automatizadas, y en la organización del trabajo en commits por módulo.
 - **Documentación:** redacción y revisión de este README y del documento del entregable, a partir de los
   artefactos del equipo.
-- **Diagramas:** revisión de la coherencia entre los diagramas y el código, y la imagen de la máquina de
-  estados de la habitación, generada a partir de su código PlantUML.
+- **Diagramas:** revisión de la coherencia entre los diagramas y el código; actualización del código
+  PlantUML del C4 (niveles 2 a 4), de la máquina de estados de la habitación y de los diagramas de secuencia de
+  HU-05, HU-07 y HU-09, y generación de sus imágenes.
 - **Plantillas GoF y SOLID:** revisión de las plantillas de análisis del Entregable 2.
 
 Cada integrante revisó el módulo de sus commits, y el MVP se ejecutó y se probó con los usuarios de

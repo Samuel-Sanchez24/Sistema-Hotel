@@ -1,0 +1,55 @@
+@startuml nivel3-componentes
+!include <C4/C4_Component>
+
+title Sistema de Gestión Hotelera — Hotel Fast and Furious\nNivel 3 — Componentes de la capa de aplicación
+
+Container(web, "HotelSystem.Web", "ASP.NET Core MVC", "Controladores por rol y vistas Razor")
+Container(api, "HotelSystem.API", "ASP.NET Core Web API", "Controladores REST con JWT")
+ContainerDb(bd, "Base de datos", "SQL Server o SQLite", "")
+System_Ext(correo, "Servicio de correo", "SMTP. ")
+
+Container_Boundary(nucleo, "Capas Application, Persistence e Infrastructure (dentro de HotelSystem.Web y HotelSystem.API)") {
+    Component(usuarios, "Usuarios y Accesos", "IAuthService, IUsuarioService", "Épica 1 · HU-01, HU-02 · RF-12 · RN-08, RN-10 · Factory Method")
+    Component(reservas, "Reservas", "IReservaService", "Épica 2 · HU-03 a HU-06 · RF-01, RF-02, RF-07, RF-08 · RN-01, RN-02, RN-04, RN-09, RN-10, RN-11 · Observer")
+    Component(servicios, "Servicios Adicionales", "IServicioAdicionalService", "Épica 3 · HU-07, HU-08 · RF-05, RF-11 · RN-06, RN-07")
+    Component(tours, "Tours", "ITourService", "Épica 4 · HU-09, HU-10 · RF-03, RF-04, RF-09 · RN-03, RN-04, RN-05, RN-10, RN-11")
+    Component(housekeeping, "Housekeeping", "IHabitacionService", "Épica 5 · HU-05, HU-11 · RF-07, RF-10 · RN-02 · State")
+    Component(cierre, "Cierre de Cuenta y Reportes", "ICuentaService, IReporteService", "Épica 6 · HU-06, HU-12, HU-13 · RF-06, RF-13 · RN-07 · Facade y Strategy")
+    Component(persistencia, "Persistencia", "HotelSystem.Persistence, EF Core", "Repositorios, unidad de trabajo y HotelDbContext")
+    Component(infra, "Infraestructura", "HotelSystem.Infrastructure", "Correo, reloj, hash PBKDF2 y exportadores PDF y Excel")
+}
+
+Rel(web, usuarios, "Login y cuentas")
+Rel(web, reservas, "Reservas y recepción")
+Rel(web, servicios, "Solicitudes y consumos")
+Rel(web, tours, "Tours")
+Rel(web, housekeeping, "Estado de habitaciones")
+Rel(web, cierre, "Cuenta y reportes")
+Rel(api, usuarios, "Usa las mismas 8 interfaces")
+Rel(reservas, housekeeping, "Check-in y check-out cambian el estado", "RN-02 · State")
+Rel(cierre, reservas, "Registra la salida", "IReservaService")
+Rel(cierre, tours, "Tours de la cuenta", "ITourService")
+Rel(cierre, servicios, "Consumos de la cuenta", "IServicioAdicionalService")
+Rel(servicios, persistencia, "Repositorios")
+Rel(usuarios, persistencia, "Repositorios")
+Rel(reservas, persistencia, "Repositorios")
+Rel(tours, persistencia, "Repositorios")
+Rel(housekeeping, persistencia, "Repositorios")
+Rel(cierre, persistencia, "Repositorios")
+Rel(usuarios, infra, "Hash de contraseñas")
+Rel(reservas, infra, "Correo de confirmación", "RF-02")
+Rel(cierre, infra, "Exportar PDF o Excel", "Strategy")
+Rel(persistencia, bd, "Lee y escribe", "EF Core")
+Rel(infra, correo, "Envía", "SMTP")
+
+SHOW_LEGEND()
+
+note as N1
+  Los 6 componentes son las carpetas de HotelSystem.Application
+  y corresponden 1 a 1 a las 6 épicas.
+  <b>Patrones GoF:</b> Factory Method (Usuarios), Observer (Reservas),
+  State (Housekeeping), Facade y Strategy (Cierre de Cuenta).
+  El detalle de clases está en el Nivel 4.
+end note
+
+@enduml
